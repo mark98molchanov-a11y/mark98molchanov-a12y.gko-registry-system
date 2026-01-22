@@ -762,7 +762,7 @@ async function loadFromGitHub() {
         // Если сегодняшнего нет, пробуем стандартное имя
         if (!response.ok) {
             console.log('Сегодняшнего файла нет, пробую стандартный...');
-            const defaultFile = 'gko_all_data.json';
+            const defaultFile = 'gko_all_data_2026-01-22.json';
             response = await fetch(`${GITHUB_SYNC_API}?path=${encodeURIComponent(defaultFile)}`);
             loadedFileName = defaultFile;
         }
