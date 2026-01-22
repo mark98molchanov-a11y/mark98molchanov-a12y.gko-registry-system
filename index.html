@@ -735,16 +735,6 @@
         </div>
     </div>
 
-    <script>
-        // ============== КОНСТАНТЫ И ПЕРЕМЕННЫЕ ==============
-        const STORAGE_KEY_NPA = 'rosreestr_npa_viz_v5';
-        const STORAGE_KEY_DASHBOARDS = 'gko_dashboards_v2';
-        const STORAGE_KEY_ALL = 'gko_all_data_2026-01-22.json';
-        const now = Date.now();
-        const GITHUB_SYNC_ENABLED = true;
-const GITHUB_SYNC_API = 'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main'; // Или полный URL если на другом домене
-
-// Автоматическая загрузка из GitHub при открытии
 <script>
     // ============== КОНСТАНТЫ И ПЕРЕМЕННЫЕ ==============
     const STORAGE_KEY_NPA = 'rosreestr_npa_viz_v5';
@@ -753,8 +743,9 @@ const GITHUB_SYNC_API = 'https://raw.githubusercontent.com/mark98molchanov-a11y/
     const now = Date.now();
     const GITHUB_SYNC_ENABLED = true;
     
-    // ИСПРАВЛЕНО: Используем правильный GitHub Raw URL
-    const GITHUB_SYNC_API = 'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main/';
+    // ОПРЕДЕЛЯЕМ ОБЕ ПЕРЕМЕННЫЕ
+    const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main/';
+    const GITHUB_SYNC_API = GITHUB_RAW_URL; // Используем тот же URL
 
     // Автоматическая загрузка из GitHub при открытии
     async function loadFromGitHub() {
@@ -768,7 +759,7 @@ const GITHUB_SYNC_API = 'https://raw.githubusercontent.com/mark98molchanov-a11y/
             const today = new Date().toISOString().split('T')[0];
             const todayFile = `gko_all_data_${today}.json`;
             
-            // ИСПРАВЛЕНО: Правильный формат URL для raw.githubusercontent.com
+            // Используем GITHUB_SYNC_API (которая теперь = GITHUB_RAW_URL)
             let response = await fetch(`${GITHUB_SYNC_API}${todayFile}`);
             let loadedFileName = todayFile;
             
