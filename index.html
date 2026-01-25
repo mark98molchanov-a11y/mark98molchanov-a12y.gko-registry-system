@@ -795,6 +795,7 @@
     const GITHUB_SYNC_API = window.GITHUB_RAW_URL;
 
     // Автоматическая загрузка из GitHub при открытии
+// Автоматическая загрузка из GitHub при открытии
 async function loadFromGitHub() {
     if (!GITHUB_SYNC_ENABLED) {
         loadData();
@@ -819,18 +820,25 @@ async function loadFromGitHub() {
             appData = [...json.npas];
             localStorage.setItem(STORAGE_KEY_NPA, JSON.stringify(appData));
             console.log(`Загружено ${json.npas.length} записей НПА`);
+            // Обновляем первую вкладку
+            renderGrid();
         }
         
         if (json.dashboards && Array.isArray(json.dashboards)) {
             dashboardsData = [...json.dashboards];
             localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboardsData));
             console.log(`Загружено ${json.dashboards.length} дашбордов`);
-        }
-        
-        // Обновляем интерфейс
-        renderGrid();
-        if (currentTab === 'dashboards') {
-            renderDashboardsGrid();
+            // Обновляем вторую вкладку, даже если она не активна
+            if (currentTab === 'dashboards') {
+                renderDashboardsGrid();
+            } else {
+                // Все равно загружаем данные, но не рендерим
+                // Функции фильтров будут работать с актуальными данными
+                updateDashboardStatsDashboards();
+                renderStatusFiltersDashboards();
+                renderTypeFiltersDashboards();
+                renderTagsDashboards();
+            }
         }
         
         showNotification('✅ Данные загружены из GitHub', 'success');
@@ -1641,20 +1649,30 @@ function showNotification(message, type = 'info') {
         }
 
         // ============== ФУНКЦИИ ДЛЯ ДАШБОРДОВ ==============
-        function loadDashboardsData() {
-            const saved = localStorage.getItem(STORAGE_KEY_DASHBOARDS);
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    dashboardsData = parsed.length >= 5 ? parsed : initialDashboards;
-                } catch (e) { 
-                    dashboardsData = [...initialDashboards]; 
-                }
-            } else {
-                dashboardsData = [...initialDashboards];
-            }
-            renderDashboardsGrid();
+function loadDashboardsData() {
+    const saved = localStorage.getItem(STORAGE_KEY_DASHBOARDS);
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            dashboardsData = parsed.length >= 5 ? parsed : initialDashboards;
+        } catch (e) { 
+            dashboardsData = [...initialDashboards]; 
         }
+    } else {
+        dashboardsData = [...initialDashboards];
+    }
+    
+    // Всегда обновляем статистику и фильтры
+    updateDashboardStatsDashboards();
+    renderStatusFiltersDashboards();
+    renderTypeFiltersDashboards();
+    renderTagsDashboards();
+    
+    // Обновляем грид только если вкладка активна
+    if (currentTab === 'dashboards') {
+        renderDashboardsGrid();
+    }
+}
 
         function saveDashboardsData() {
             localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboardsData));
