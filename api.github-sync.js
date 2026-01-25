@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   }
 
   const {
-    GITHUB_TOKEN='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',
+    GITHUB_TOKEN='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',
     GITHUB_REPO_OWNER = 'mark98molchanov',
     GITHUB_REPO_NAME = 'mark98molchanov-a11y'
   } = process.env;
