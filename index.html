@@ -2610,12 +2610,9 @@ ${importedDashboards.slice(0, 3).map(d =>
 window.addEventListener('DOMContentLoaded', function() {
     // Сначала пытаемся загрузить из GitHub
     loadFromGitHub().then(() => {
-        console.log('GitHub загрузка завершена');
-    }).catch(() => {
-        // Если GitHub недоступен, загружаем локальные данные
-        console.log('Используем локальные данные');
-        loadData();
-        loadDashboardsData();
+        console.log('✅ Загрузка из GitHub завершена');
+    }).catch((error) => {
+        console.log('⚠️ GitHub недоступен:', error.message);
     });
 });
     </script>
