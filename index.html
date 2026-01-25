@@ -750,34 +750,36 @@
 
     // Автоматическая загрузка из GitHub при открытии
 async function loadFromGitHub() {
-    if (!GITHUB_SYNC_ENABLED) return;
+    if (!GITHUB_SYNC_ENABLED) {
+        loadData();
+        loadDashboardsData();
+        return;
+    }
     
     try {
         console.log('Загрузка данных из GitHub...');
-        showNotification('Загрузка данных из GitHub...', 'info');
         
-            
-            // Вариант 1: Пытаемся загрузить файл с сегодняшней датой
-            const today = new Date().toISOString().split('T')[0];
-            const todayFile = `gko_all_data_${today}.json`;
-            
-            let response = await fetch(`${GITHUB_SYNC_API}${todayFile}`);
-            let loadedFileName = todayFile;
-            
-            // Если сегодняшнего нет, пробуем стандартное имя
-            if (!response.ok) {
-                console.log('Сегодняшнего файла нет, пробую стандартный...');
-                const defaultFile = 'gko_all_data_2026-01-22.json';
-                response = await fetch(`${GITHUB_SYNC_API}${defaultFile}`);
-                loadedFileName = defaultFile;
-            }
-            
-            if (!response.ok) {
-                throw new Error(`Файл не найден на GitHub (${response.status})`);
-            }
-            
-            const json = await response.json();
-            
+        // Вариант 1: Пытаемся загрузить файл с сегодняшней датой
+        const today = new Date().toISOString().split('T')[0];
+        const todayFile = `gko_all_data_${today}.json`;
+        
+        let response = await fetch(`${GITHUB_SYNC_API}${todayFile}`);
+        let loadedFileName = todayFile;
+        
+        // Если сегодняшнего нет, пробуем стандартное имя
+        if (!response.ok) {
+            console.log('Сегодняшнего файла нет, пробую стандартный...');
+            const defaultFile = 'gko_all_data_2026-01-22.json';
+            response = await fetch(`${GITHUB_SYNC_API}${defaultFile}`);
+            loadedFileName = defaultFile;
+        }
+        
+        if (!response.ok) {
+            throw new Error(`Файл не найден на GitHub (${response.status})`);
+        }
+        
+        const json = await response.json();
+        
         if (json.npas && Array.isArray(json.npas)) {
             appData = [...json.npas];
             localStorage.setItem(STORAGE_KEY_NPA, JSON.stringify(appData));
@@ -796,15 +798,15 @@ async function loadFromGitHub() {
         }
         
         showNotification(`✅ Данные загружены из GitHub\nФайл: ${loadedFileName}`, 'success');
-        updateFileNameIndicator(loadedFileName)
+        updateFileNameIndicator(loadedFileName);
         
     } catch (error) {
         console.warn('Не удалось загрузить из GitHub:', error.message);
-        showNotification('Используются локальные данные', 'warning');
         
-        // Загружаем локальные данные ТОЛЬКО при ошибке GitHub
+        // Загружаем локальные данные БЕЗ показа уведомления
         loadData();
         loadDashboardsData();
+        
     }
 }
 // Сохранение в GitHub
