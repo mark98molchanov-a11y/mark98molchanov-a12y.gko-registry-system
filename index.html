@@ -418,10 +418,18 @@
             </div>
 
             <!-- LIST HEADER -->
-            <div class="flex items-center justify-between mt-2 mb-1">
-                <div class="text-sm text-slate-500 font-medium">Список записей (<span id="filteredCount">0</span>)</div>
-                <button onclick="toggleSelectAll()" class="text-xs text-brand-600 font-bold hover:underline">Выбрать показанные</button>
-            </div>
+       <div class="flex items-center justify-between mt-2 mb-1">
+    <div class="text-sm text-slate-500 font-medium">Список записей (<span id="filteredCount">0</span>)</div>
+    <div class="flex gap-2">
+        <button onclick="exportToExcelNPA()" class="text-xs text-emerald-600 font-bold hover:underline flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Экспорт Excel
+        </button>
+        <button onclick="toggleSelectAll()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
+    </div>
+</div>
             
             <!-- GRID -->
             <div id="cardsGrid" class="grid grid-cols-1 gap-4"></div>
@@ -2385,7 +2393,78 @@ function exportJson() {
             loadData();
         } 
     }
+    function exportToExcelNPA() {
+        // Используем текущие фильтры для выгрузки
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const sortMode = document.getElementById('sortSelect').value;
+        
+        let filtered = appData.filter(item => {
+            const matchesDoc = !currentDocFilter || item.doc === currentDocFilter;
+            const matchesType = !currentTypeFilter || item.type === currentTypeFilter;
+            const matchesTarget = !currentTargetFilter || (item.target && item.target.includes(currentTargetFilter));
+            const matchesSearch = 
+                (item.human && item.human.toLowerCase().includes(search)) || 
+                (item.norm && item.norm.toLowerCase().includes(search)) || 
+                (item.doc && item.doc.toLowerCase().includes(search));
+            return matchesDoc && matchesType && matchesTarget && matchesSearch;
+        });
 
+        // Применяем сортировку как в интерфейсе
+        filtered.sort((a, b) => {
+            if (sortMode === 'dateDesc') return parseDate(b.date) - parseDate(a.date);
+            if (sortMode === 'dateAsc') return parseDate(a.date) - parseDate(b.date);
+            if (sortMode === 'lastUpdated') return (b.updated || 0) - (a.updated || 0);
+            return a.id - b.id;
+        });
+
+        // Подготавливаем данные для Excel
+        const data = filtered.map(item => ({
+            'Документ': item.doc || '',
+            'Норма/Статья': item.norm || '',
+            'Тип': item.type || '',
+            'Теги': item.target || '',
+            'Было': item.before || '',
+            'Стало': item.after || '',
+            'Пояснение': item.human || '',
+            'Пример': item.example || '',
+            'Основание': item.changeDoc || '',
+            'Дата вступления': item.date || '',
+            'Старая редакция': item.fullOld || '',
+            'Новая редакция': item.fullNew || '',
+            'Дата обновления': item.updated ? new Date(item.updated).toLocaleString('ru-RU') : ''
+        }));
+        
+        // Создаем лист Excel
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Реестр НПА");
+        
+        // Настраиваем ширину колонок
+        ws['!cols'] = [
+            { wch: 15 },    // Документ
+            { wch: 20 },    // Норма/Статья
+            { wch: 12 },    // Тип
+            { wch: 20 },    // Теги
+            { wch: 30 },    // Было
+            { wch: 30 },    // Стало
+            { wch: 40 },    // Пояснение
+            { wch: 30 },    // Пример
+            { wch: 20 },    // Основание
+            { wch: 12 },    // Дата вступления
+            { wch: 30 },    // Старая редакция
+            { wch: 30 },    // Новая редакция
+            { wch: 20 }     // Дата обновления
+        ];
+        
+        // Генерируем имя файла с датой
+        const fileName = `Реестр_НПА_${new Date().toISOString().split('T')[0]}.xlsx`;
+        
+        // Скачиваем файл
+        XLSX.writeFile(wb, fileName);
+        
+        // Показываем уведомление
+        showNotification(`Экспортировано ${filtered.length} записей в Excel`, 'success');
+    }
     // ============== ФУНКЦИИ ДЛЯ ДАШБОРДОВ ==============
     function loadDashboardsData() {
         const saved = localStorage.getItem(STORAGE_KEY_DASHBOARDS);
