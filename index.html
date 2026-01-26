@@ -831,68 +831,91 @@
     const GITHUB_SYNC_API = window.GITHUB_RAW_URL;
 
     // Автоматическая загрузка из GitHub при открытии
-    async function loadFromGitHub() {
-        if (!GITHUB_SYNC_ENABLED) {
-            loadData();
-            loadDashboardsData();
-            loadCalculatorData();
-            return;
-        }
+// ============== ОБНОВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ИЗ GITHUB ==============
+async function loadFromGitHub() {
+    try {
+        console.log('Пытаемся загрузить данные из GitHub...');
         
-        try {
-            console.log('Загрузка данных из GitHub...');
-            
-            // Пытаемся загрузить стандартный файл
-            const response = await fetch(`${GITHUB_SYNC_API}gko_all_data.json`);
-            
-            if (!response.ok) {
-                throw new Error(`Файл не найден (${response.status})`);
-            }
-            
-            const json = await response.json();
-            
-            // Полностью заменяем данные на те, что из GitHub
-            if (json.npas && Array.isArray(json.npas)) {
-                appData = [...json.npas];
-                localStorage.setItem(STORAGE_KEY_NPA, JSON.stringify(appData));
-                console.log(`Загружено ${json.npas.length} записей НПА`);
-                // Обновляем первую вкладку
-                renderGrid();
-            }
-            
-            if (json.dashboards && Array.isArray(json.dashboards)) {
-                dashboardsData = [...json.dashboards];
-                localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboardsData));
-                console.log(`Загружено ${json.dashboards.length} дашбордов`);
-                // Обновляем вторую вкладку, даже если она не активна
-                if (currentTab === 'dashboards') {
-                    renderDashboardsGrid();
-                } else {
-                    // Все равно загружаем данные, но не рендерим
+        // Пробуем несколько вариантов URL на случай изменений
+        const githubUrls = [
+            'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main/gko_all_data.json',
+            'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/master/gko_all_data.json',
+            'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main/data.json'
+        ];
+        
+        let success = false;
+        let lastError = null;
+        
+        // Пробуем каждый URL по очереди
+        for (const url of githubUrls) {
+            try {
+                console.log(`Пробуем URL: ${url}`);
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    console.warn(`Не удалось загрузить по URL ${url}: ${response.status}`);
+                    continue;
+                }
+                
+                const json = await response.json();
+                console.log('Получены данные из GitHub:', json);
+                
+                // Полностью заменяем данные на те, что из GitHub
+                if (json.npas && Array.isArray(json.npas)) {
+                    appData = [...json.npas];
+                    localStorage.setItem(STORAGE_KEY_NPA, JSON.stringify(appData));
+                    console.log(`Загружено ${json.npas.length} записей НПА`);
+                    // Обновляем первую вкладку
+                    renderGrid();
+                }
+                
+                if (json.dashboards && Array.isArray(json.dashboards)) {
+                    dashboardsData = [...json.dashboards];
+                    localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboardsData));
+                    console.log(`Загружено ${json.dashboards.length} дашбордов`);
+                    
+                    // Обновляем вкладку дашбордов
                     updateDashboardStatsDashboards();
                     renderStatusFiltersDashboards();
                     renderTypeFiltersDashboards();
                     renderTagsDashboards();
+                    
+                    if (currentTab === 'dashboards') {
+                        renderDashboardsGrid();
+                    }
                 }
+                
+                if (json.calculator && json.calculator.db) {
+                    calculatorData = json.calculator;
+                    localStorage.setItem(STORAGE_KEY_CALCULATOR, JSON.stringify(calculatorData));
+                    console.log('Загружены данные калькулятора из GitHub');
+                }
+                
+                success = true;
+                showNotification('✅ Данные загружены из GitHub', 'success');
+                break;
+                
+            } catch (error) {
+                lastError = error;
+                console.warn(`Ошибка при загрузке с ${url}:`, error.message);
+                continue;
             }
-            
-            if (json.calculator && json.calculator.db) {
-                calculatorData = json.calculator;
-                localStorage.setItem(STORAGE_KEY_CALCULATOR, JSON.stringify(calculatorData));
-                console.log('Загружены данные калькулятора из GitHub');
-            }
-            
-            showNotification('✅ Данные загружены из GitHub', 'success');
-            
-        } catch (error) {
-            console.warn('Не удалось загрузить из GitHub:', error.message);
-            
-            // Просто загружаем локальные данные без уведомления
-            loadData();
-            loadDashboardsData();
-            loadCalculatorData();
         }
+        
+        if (!success) {
+            throw new Error(`Не удалось загрузить ни с одного URL. Последняя ошибка: ${lastError?.message || 'Неизвестно'}`);
+        }
+        
+    } catch (error) {
+        console.warn('Не удалось загрузить из GitHub:', error.message);
+        showNotification('⚠️ Не удалось загрузить из GitHub. Используем локальные данные', 'warning');
+        
+        // Загружаем локальные данные
+        loadData();
+        loadDashboardsData();
+        loadCalculatorData();
     }
+}
 
     // Сохранение в GitHub
     let currentGitHubToken = null;
@@ -3589,44 +3612,155 @@ function forceCalculatorRender() {
 }
     // ============== ИНИЦИАЛИЗАЦИЯ ==============
 window.addEventListener('DOMContentLoaded', function() {
-    // Загружаем локальные данные для всех вкладок
-    loadData();
-    loadDashboardsData();
-    loadCalculatorData();
+    console.log('DOM загружен, начинаем инициализацию...');
     
-    // ПРОВЕРЯЕМ АКТИВНУЮ ВКЛАДКУ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
-    setTimeout(() => {
-        if (document.getElementById('calculatorTab').classList.contains('active')) {
-            console.log('Калькулятор активен при загрузке, инициализируем...');
-            forceCalculatorRender();
-        }
-    }, 200);
-    
-    // Затем пытаемся синхронизировать с GitHub
-    loadFromGitHub().then(() => {
-        console.log('✅ Все данные загружены');
-    }).catch((error) => {
-        console.log('⚠️ GitHub недоступен:', error.message);
-    });
+    // ВАЖНО: Загружаем сначала из GitHub, потом локальные как fallback
+    loadFromGitHub()
+        .then(() => {
+            console.log('✅ Данные успешно загружены из GitHub');
+            
+            // Проверяем активную вкладку и инициализируем её
+            setTimeout(() => {
+                const activeTab = getActiveTab();
+                console.log('Активная вкладка:', activeTab);
+                
+                switch(activeTab) {
+                    case 'npas':
+                        // Уже отрендерено в loadFromGitHub или loadData
+                        console.log('Вкладка НПА активна, записей:', appData.length);
+                        break;
+                        
+                    case 'dashboards':
+                        // Гарантированно рендерим дашборды
+                        if (dashboardsData.length > 0) {
+                            renderDashboardsGrid();
+                            console.log('Вкладка дашбордов активна, дашбордов:', dashboardsData.length);
+                        } else {
+                            console.warn('Нет данных дашбордов для рендеринга');
+                        }
+                        break;
+                        
+                    case 'calculator':
+                        console.log('Вкладка калькулятора активна, инициализируем...');
+                        const calculatorRoot = document.getElementById('calculatorRoot');
+                        if (calculatorRoot && (calculatorRoot.innerHTML === '' || !window.calculatorInitialized)) {
+                            initializeCalculator();
+                        }
+                        break;
+                }
+            }, 100);
+        })
+        .catch((error) => {
+            console.warn('❌ Не удалось загрузить из GitHub:', error.message);
+            console.log('Загружаем локальные данные...');
+            
+            // Загружаем локальные данные как fallback
+            loadData();
+            loadDashboardsData();
+            loadCalculatorData();
+            
+            // Инициализируем активную вкладку
+            setTimeout(() => {
+                const activeTab = getActiveTab();
+                console.log('Инициализируем локальные данные для вкладки:', activeTab);
+                
+                switch(activeTab) {
+                    case 'dashboards':
+                        renderDashboardsGrid();
+                        break;
+                    case 'calculator':
+                        if (!window.calculatorInitialized) {
+                            initializeCalculator();
+                        }
+                        break;
+                }
+            }, 100);
+        });
 });
-    // Вспомогательная функция для переключения текста карточки
-    function toggleCardText(id) {
-        const el = document.getElementById('legal-' + id);
-        if (el) {
-            el.classList.toggle('hidden');
-            const btn = el.previousElementSibling.querySelector('button');
-            if (btn) {
-                btn.textContent = btn.textContent.includes('▼') ? 
-                    btn.textContent.replace('▼', '▲') : 
-                    btn.textContent.replace('▲', '▼');
-            }
+
+// ============== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==============
+
+// Функция для определения активной вкладки
+function getActiveTab() {
+    if (document.getElementById('npasTab') && document.getElementById('npasTab').classList.contains('active')) {
+        return 'npas';
+    } else if (document.getElementById('dashboardsTab') && document.getElementById('dashboardsTab').classList.contains('active')) {
+        return 'dashboards';
+    } else if (document.getElementById('calculatorTab') && document.getElementById('calculatorTab').classList.contains('active')) {
+        return 'calculator';
+    }
+    return 'npas'; // По умолчанию
+}
+
+// Вспомогательная функция для переключения текста карточки
+function toggleCardText(id) {
+    const el = document.getElementById('legal-' + id);
+    if (el) {
+        el.classList.toggle('hidden');
+        const btn = el.previousElementSibling.querySelector('button');
+        if (btn) {
+            btn.textContent = btn.textContent.includes('▼') ? 
+                btn.textContent.replace('▼', '▲') : 
+                btn.textContent.replace('▲', '▼');
         }
     }
+}
 
-    // Для совместимости со старым кодом
-    function handleFileImport(input) {
-        // Эта функция должна быть реализована для импорта НПА из Excel
-        alert("Импорт НПА из Excel еще не реализован");
-        input.value = '';
+// Для совместимости со старым кодом
+function handleFileImport(input) {
+    // Эта функция должна быть реализована для импорта НПА из Excel
+    alert("Импорт НПА из Excel еще не реализован");
+    input.value = '';
+}
+
+// Функция для принудительного рендеринга калькулятора
+function forceCalculatorRender() {
+    const calculatorRoot = document.getElementById('calculatorRoot');
+    if (calculatorRoot) {
+        calculatorRoot.innerHTML = '';
+        if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+            initializeCalculator();
+            window.calculatorInitialized = true;
+        } else {
+            // Ждём загрузку React
+            const checkReact = setInterval(() => {
+                if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+                    clearInterval(checkReact);
+                    initializeCalculator();
+                    window.calculatorInitialized = true;
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                clearInterval(checkReact);
+                if (!window.calculatorInitialized) {
+                    calculatorRoot.innerHTML = `
+                        <div class="text-center py-12">
+                            <div class="text-red-500 mb-4">⚠️ Ошибка загрузки калькулятора</div>
+                            <p class="text-slate-600 mb-4">React не загружен. Пожалуйста, обновите страницу</p>
+                            <button onclick="location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                                Перезагрузить страницу
+                            </button>
+                        </div>
+                    `;
+                }
+            }, 5000);
+        }
     }
+}
+
+// Функция для принудительного рендеринга дашбордов
+function forceDashboardsRender() {
+    if (dashboardsData.length > 0) {
+        renderDashboardsGrid();
+    } else {
+        loadDashboardsData();
+        setTimeout(renderDashboardsGrid, 100);
+    }
+}
+
+// Функция для принудительного рендеринга НПА
+function forceNPARender() {
+    renderGrid();
+}
 </script>
