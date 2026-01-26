@@ -240,20 +240,19 @@
                     <!-- Кнопки управления данными -->
                     <div class="flex gap-2">
                         <!-- Combined JSON Import -->
-                        <button onclick="importJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
-                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                            </svg>
-                            <span>Импорт JSON</span>
-                        </button>
+<button onclick="importJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
+    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+    </svg>
+    <span>Импорт JSON</span>
+</button>
 
-                        <!-- Combined JSON Export -->
-                        <button onclick="exportJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
-                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span>Экспорт JSON</span>
-                        </button>
+<button onclick="exportJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
+    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    <span>Экспорт JSON</span>
+</button>
 
                         <!-- Save to GitHub -->
                         <button onclick="showGitHubTokenModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow flex items-center gap-2">
@@ -945,7 +944,6 @@
         const [activeCalcTab, setActiveCalcTab] = useState(0);
         const [moneyUnit, setMoneyUnit] = useState('rub'); 
         const [period, setPeriod] = useState('2025_year');
-        const fileInputRef = useRef(null);
 
         const moneyLabels = {
             'rub': 'руб.', 'thous': 'тыс. руб.', 'mln': 'млн руб.', 'bln': 'млрд руб.', 'trln': 'трлн руб.'
@@ -1072,50 +1070,6 @@
 
         const results = useMemo(() => calculateResults(currentData), [currentData]);
 
-        // Сохранение и загрузка данных калькулятора
-        const handleCalcSave = () => {
-            const reportData = {
-                meta: { version: "3.0", date: new Date().toISOString(), period: period, moneyUnit: moneyUnit },
-                db: calcDb 
-            };
-            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `Ekap_Report_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        };
-
-        const handleCalcLoadClick = () => fileInputRef.current.click();
-
-        const handleCalcFileChange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                try {
-                    const json = JSON.parse(event.target.result);
-                    if (json.db) {
-                        setCalcDb(json.db); 
-                        if (json.meta) {
-                            if (json.meta.period) setPeriod(json.meta.period);
-                            if (json.meta.moneyUnit) setMoneyUnit(json.meta.moneyUnit);
-                        }
-                        alert("Данные калькулятора успешно загружены!");
-                    } else if (json.data) {
-                        setCalcDb(prev => ({ ...prev, [period]: json.data }));
-                        alert("Данные текущего периода загружены.");
-                    }
-                } catch (error) {
-                    alert("Ошибка чтения файла.");
-                }
-            };
-            reader.readAsText(file);
-            e.target.value = null;
-        };
 
         const sections = [
             { title: "Кадастровая оценка", short: "Кадастр", icon: IconCalculator, weight: "25%", color: "text-blue-600", bg: "bg-blue-100", numWeight: 0.25 },
@@ -1136,7 +1090,6 @@
 
         return (
             <div className="max-w-7xl mx-auto p-2 md:p-6">
-                <input type="file" ref={fileInputRef} onChange={handleCalcFileChange} className="hidden" accept=".json" />
 
                 {/* ШАПКА */}
                 <header className="mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col xl:flex-row justify-between items-center gap-4 no-print">
@@ -1159,12 +1112,6 @@
 
                         <div className="w-px h-6 bg-slate-300 mx-2 hidden xl:block"></div>
 
-                        <button onClick={handleCalcSave} className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 text-sm font-medium transition-colors">
-                            <IconDownload size={16} /> Скачать всё
-                        </button>
-                        <button onClick={handleCalcLoadClick} className="flex items-center gap-2 px-3 py-2 bg-slate-100 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-200 text-sm font-medium transition-colors">
-                            <IconUpload size={16} /> Загрузить
-                        </button>
                         <button onClick={() => {if(window.confirm('Очистить данные ТОЛЬКО текущего периода?')) resetCurrentCalcPeriod() }} className="px-3 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">
                             <IconRotateCcw size={16} />
                         </button>
@@ -1788,7 +1735,7 @@
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData, null, 2));
         const a = document.createElement('a');
         a.href = dataStr;
-        a.download = `gko_all_data_${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `gko_all_data.json`; 
         a.click();
     }
 
