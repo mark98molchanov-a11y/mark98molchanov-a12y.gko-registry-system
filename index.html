@@ -1170,7 +1170,33 @@ function EfficiencyCalculator() {
 
         const results = useMemo(() => calculateResults(currentData), [currentData]);
 
-
+ const resetCurrentCalcPeriod = () => {
+            if (!confirm(`Очистить ВСЕ данные для периода "${periodsList.find(p => p.id === period)?.label}"?`)) {
+                return;
+            }
+            
+            // Создаем пустые данные для текущего периода
+            const emptyData = {
+                ks_otch: 0, ks_cel: 0, k_on_obsh: 0, k_21: 0, k_22: 0, k_22_1: 0, k_sud: 0, 
+                ks_on_obsh: 0, ks_21: 0, ks_22: 0, ks_22_1: 0, ks_sud: 0,
+                k_bezrp: 0, k_mkd: 0, k_vyyavl: 0, k_on_obsh_reestr: 0, k_nkor: 0,
+                s_vyyavl: 0, s_ter: 0, s_vuf: 0, s_gosmun: 0,
+                k_ps: 0, k_pdpr: 0, k_reg: 0, k_obsh_reg: 0,
+                k_vknm_gzn: 0, k_vknm_mzk: 0, k_pknm_gzn: 0, k_pknm_mzk: 0, k_uknm_gzn: 0, k_uknm_mzk: 0,
+            };
+            
+            // Обновляем данные только для текущего периода
+            const updatedData = {
+                ...calculatorData,
+                [period]: emptyData
+            };
+            
+            // Обновляем state и сохраняем
+            setCalculatorData(updatedData);
+            localStorage.setItem('gko_calculator_data_v1', JSON.stringify(updatedData));
+            
+            showNotification(`Данные для текущего периода очищены`, 'success');
+        };
         const sections = [
             { title: "Кадастровая оценка", short: "Кадастр", icon: IconCalculator, weight: "25%", color: "text-blue-600", bg: "bg-blue-100", numWeight: 0.25 },
             { title: "Реестр недвижимости", short: "Реестр", icon: IconDatabase, weight: "25%", color: "text-indigo-600", bg: "bg-indigo-100", numWeight: 0.25 },
@@ -1212,9 +1238,9 @@ function EfficiencyCalculator() {
 
                         <div className="w-px h-6 bg-slate-300 mx-2 hidden xl:block"></div>
 
-                        <button onClick={() => {if(window.confirm('Очистить данные ТОЛЬКО текущего периода?')) resetCurrentCalcPeriod() }} className="px-3 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">
-                            <IconRotateCcw size={16} />
-                        </button>
+                  <button onClick={() => {if(window.confirm('Очистить данные ТОЛЬКО текущего периода?')) resetCurrentCalcPeriod() }} className="px-3 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">
+    <IconRotateCcw size={16} />
+</button>
                     </div>
                 </header>
                 
@@ -1756,37 +1782,37 @@ async function loadFromGitHub() {
     }
     
     // Вспомогательная функция для уведомлений
-    function showNotification(message, type = 'info') {
-        // Создаем временное уведомление
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
-            type === 'success' ? 'bg-emerald-500 text-white' :
-            type === 'error' ? 'bg-red-500 text-white' :
-            type === 'warning' ? 'bg-amber-500 text-white' :
-            'bg-brand-600 text-white'
-        }`;
-        notification.innerHTML = `
-            <div class="flex items-center gap-2">
-                <span class="font-medium">${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-white/80">&times;</button>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Автоматическое скрытие через 5 секунд
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentElement) {
-                        notification.remove();
-                    }
-                }, 300);
-            }
-        }, 5000);
-    }
+function showNotification(message, type = 'info') {
+    // Создаем временное уведомление
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
+        type === 'success' ? 'bg-emerald-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        type === 'warning' ? 'bg-amber-500 text-white' :
+        'bg-brand-600 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center gap-2">
+            <span class="font-medium">${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-white/80">&times;</button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Автоматическое скрытие через 5 секунд
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+}
 
     // Глобальные переменные для НПА
     let appData = [];
