@@ -1334,74 +1334,119 @@
     }
 
     // ============== ОБЩИЕ ФУНКЦИИ ==============
-    function switchTab(tabName) {
-        // Обновляем активные кнопки вкладок
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+function switchTab(tabName, event = null) {
+    // Обновляем активные кнопки вкладок
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // event может быть передан, а может и нет
+    if (event && event.target) {
         event.target.classList.add('active');
-        
-        // Скрываем все вкладки, показываем активную
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
+    } else {
+        // Находим кнопку по data-атрибуту или другим способом
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.textContent.includes(tabName === 'npas' ? 'Реестр НПА' : 
+                                        tabName === 'dashboards' ? 'Дашборды' : 
+                                        'Калькулятор')) {
+                btn.classList.add('active');
+            }
         });
-        document.getElementById(`${tabName}Tab`).classList.add('active');
+    }
+    
+    // Скрываем все вкладки, показываем активную
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    const tabElement = document.getElementById(`${tabName}Tab`);
+    if (tabElement) {
+        tabElement.classList.add('active');
+    }
+    
+    // Обновляем кнопки импорта/добавления
+    if (tabName === 'npas') {
+        document.getElementById('npaImportButtons').classList.remove('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Добавить запись';
+        document.getElementById('resetBtnText').textContent = 'Сброс НПА';
+        currentTab = 'npas';
         
-        // Обновляем кнопки импорта/добавления
-        if (tabName === 'npas') {
-            document.getElementById('npaImportButtons').classList.remove('hidden');
-            document.getElementById('dashboardsImportButtons').classList.add('hidden');
-            document.getElementById('addButtonText').textContent = 'Добавить запись';
-            document.getElementById('resetBtnText').textContent = 'Сброс НПА';
-            currentTab = 'npas';
-            // Скрываем тулбар дашбордов, показываем тулбар НПА
-            document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-            if (selectedIds.size > 0) {
-                document.getElementById('bulkToolbar').classList.remove('hidden');
-            }
-        } else if (tabName === 'dashboards') {
-            document.getElementById('npaImportButtons').classList.add('hidden');
-            document.getElementById('dashboardsImportButtons').classList.remove('hidden');
-            document.getElementById('addButtonText').textContent = 'Новый дашборд';
-            document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
-            currentTab = 'dashboards';
-            // Скрываем тулбар НПА, показываем тулбар дашбордов
-            document.getElementById('bulkToolbar').classList.add('hidden');
-            if (selectedIdsDashboards.size > 0) {
-                document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
-            }
-            
-            // ГАРАНТИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ ВКЛАДКИ ДАШБОРДОВ
-            if (dashboardsData.length === 0) {
-                loadDashboardsData();
-            }
-            
-            setTimeout(() => {
-                updateDashboardStatsDashboards();
-                renderStatusFiltersDashboards();
-                renderTypeFiltersDashboards();
-                renderTagsDashboards();
-                updateChartDashboards(dashboardsData);
-                renderDashboardsGrid();
-                updateBulkToolbarDashboards();
-            }, 50);
-        } else if (tabName === 'calculator') {
-            document.getElementById('npaImportButtons').classList.add('hidden');
-            document.getElementById('dashboardsImportButtons').classList.add('hidden');
-            document.getElementById('addButtonText').textContent = 'Новая запись';
-            document.getElementById('resetBtnText').textContent = 'Сброс калькулятора';
-            currentTab = 'calculator';
-            // Скрываем все тулбары
-            document.getElementById('bulkToolbar').classList.add('hidden');
-            document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-            
+        // Скрываем тулбар дашбордов, показываем тулбар НПА
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        if (selectedIds.size > 0) {
+            document.getElementById('bulkToolbar').classList.remove('hidden');
+        }
+        
+        // Гарантированно обновляем НПА данные
+        if (appData.length === 0) {
+            loadData();
+        } else {
+            renderGrid();
+        }
+        
+    } else if (tabName === 'dashboards') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.remove('hidden');
+        document.getElementById('addButtonText').textContent = 'Новый дашборд';
+        document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
+        currentTab = 'dashboards';
+        
+        // Скрываем тулбар НПА, показываем тулбар дашбордов
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        if (selectedIdsDashboards.size > 0) {
+            document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
+        }
+        
+        // ГАРАНТИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ ВКЛАДКИ ДАШБОРДОВ
+        if (dashboardsData.length === 0) {
+            loadDashboardsData();
+        }
+        
+        setTimeout(() => {
+            updateDashboardStatsDashboards();
+            renderStatusFiltersDashboards();
+            renderTypeFiltersDashboards();
+            renderTagsDashboards();
+            updateChartDashboards(dashboardsData);
+            renderDashboardsGrid();
+            updateBulkToolbarDashboards();
+        }, 50);
+        
+    } else if (tabName === 'calculator') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Новая запись';
+        document.getElementById('resetBtnText').textContent = 'Сброс калькулятора';
+        currentTab = 'calculator';
+        
+        // Скрываем все тулбары
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        
+        // ОЧЕНЬ ВАЖНО: УБЕДИТЕСЬ ЧТО React ПОДКЛЮЧЕН
+        ensureReactLoaded().then(() => {
             // Загружаем данные калькулятора если нужно
             if (!window.calculatorInitialized) {
                 loadCalculatorData();
                 initializeCalculator();
+                window.calculatorInitialized = true;
+            } else {
+                // Если уже инициализирован, убедимся что данные загружены и перерендерим
+                loadCalculatorData();
+                // Форсируем перерисовку калькулятора
+                const calculatorRoot = document.getElementById('calculatorRoot');
+                if (calculatorRoot && calculatorRoot.innerHTML.trim() === '') {
+                    initializeCalculator();
+                }
             }
-        }
+        }).catch(err => {
+            console.error('React не загружен:', err);
+            // Показываем fallback-сообщение
+            showCalculatorFallback();
+        });
     }
+}
 
     function hardResetCurrent() {
         if (currentTab === 'npas') {
@@ -3518,20 +3563,29 @@ ${importedDashboards.slice(0, 3).map(d =>
     }
 
     // ============== ИНИЦИАЛИЗАЦИЯ ==============
-    window.addEventListener('DOMContentLoaded', function() {
-        // Загружаем локальные данные для всех вкладок
-        loadData();
-        loadDashboardsData();
-        loadCalculatorData();
-        
-        // Затем пытаемся синхронизировать с GitHub
-        loadFromGitHub().then(() => {
-            console.log('✅ Все данные загружены');
-        }).catch((error) => {
-            console.log('⚠️ GitHub недоступен:', error.message);
-        });
+window.addEventListener('DOMContentLoaded', function() {
+    // Загружаем локальные данные для всех вкладок
+    loadData();
+    loadDashboardsData();
+    loadCalculatorData();
+    
+    // ПРОВЕРЯЕМ АКТИВНУЮ ВКЛАДКУ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+    setTimeout(() => {
+        if (document.getElementById('calculatorTab').classList.contains('active')) {
+            console.log('Калькулятор активен при загрузке, инициализируем...');
+            if (!window.calculatorInitialized) {
+                initializeCalculator();
+            }
+        }
+    }, 100);
+    
+    // Затем пытаемся синхронизировать с GitHub
+    loadFromGitHub().then(() => {
+        console.log('✅ Все данные загружены');
+    }).catch((error) => {
+        console.log('⚠️ GitHub недоступен:', error.message);
     });
-
+});
     // Вспомогательная функция для переключения текста карточки
     function toggleCardText(id) {
         const el = document.getElementById('legal-' + id);
