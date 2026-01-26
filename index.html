@@ -1425,29 +1425,37 @@ function switchTab(tabName, event = null) {
         document.getElementById('bulkToolbarDashboards').classList.add('hidden');
         
         // ОЧЕНЬ ВАЖНО: УБЕДИТЕСЬ ЧТО React ПОДКЛЮЧЕН
-        ensureReactLoaded().then(() => {
-            // Загружаем данные калькулятора если нужно
-            if (!window.calculatorInitialized) {
-                loadCalculatorData();
-                initializeCalculator();
-                window.calculatorInitialized = true;
-            } else {
-                // Если уже инициализирован, убедимся что данные загружены и перерендерим
-                loadCalculatorData();
-                // Форсируем перерисовку калькулятора
-                const calculatorRoot = document.getElementById('calculatorRoot');
-                if (calculatorRoot && calculatorRoot.innerHTML.trim() === '') {
-                    initializeCalculator();
-                }
-            }
-        }).catch(err => {
-            console.error('React не загружен:', err);
-            // Показываем fallback-сообщение
-            showCalculatorFallback();
-        });
+   } else if (tabName === 'calculator') {
+    document.getElementById('npaImportButtons').classList.add('hidden');
+    document.getElementById('dashboardsImportButtons').classList.add('hidden');
+    document.getElementById('addButtonText').textContent = 'Новая запись';
+    document.getElementById('resetBtnText').textContent = 'Сброс калькулятора';
+    currentTab = 'calculator';
+    
+    // Скрываем все тулбары
+    document.getElementById('bulkToolbar').classList.add('hidden');
+    document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+    
+    // УБИРАЕМ ensureReactLoaded() и просто инициализируем калькулятор
+    // Загружаем данные калькулятора если нужно
+    if (!window.calculatorInitialized) {
+        loadCalculatorData();
+        initializeCalculator();
+        window.calculatorInitialized = true;
+    } else {
+        // Если уже инициализирован, убедимся что данные загружены и перерендерим
+        loadCalculatorData();
+        // Форсируем перерисовку калькулятора
+        const calculatorRoot = document.getElementById('calculatorRoot');
+        if (calculatorRoot && calculatorRoot.innerHTML.trim() === '') {
+            initializeCalculator();
+        } else {
+            // Если калькулятор уже отрендерен, просто обновляем данные
+            // Можно добавить принудительный ререндер при необходимости
+            window.calculatorData = calculatorData;
+        }
     }
 }
-
     function hardResetCurrent() {
         if (currentTab === 'npas') {
             hardResetNPA();
