@@ -2090,7 +2090,6 @@ function exportJson() {
         input.click();
     }
 
-    // ============== ОБЩИЕ ФУНКЦИИ ==============
 function switchTab(tabName) {
     // Снимаем класс active со всех элементов навигации
     document.querySelectorAll('.book-subsection').forEach(el => {
@@ -2098,7 +2097,15 @@ function switchTab(tabName) {
     });
     
     // Добавляем класс active только к нажатому элементу
-    const activeNavItem = document.getElementById(`nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+    // Маппинг имен вкладок на ID элементов навигации
+    const navIdMap = {
+        'npas': 'navNPA',
+        'dashboards': 'navDashboards', 
+        'calculator': 'navCalculator'
+    };
+    
+    const navId = navIdMap[tabName] || `nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`;
+    const activeNavItem = document.getElementById(navId);
     if (activeNavItem) {
         activeNavItem.classList.add('active');
     }
