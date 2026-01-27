@@ -2091,75 +2091,76 @@ function exportJson() {
     }
 
     // ============== ОБЩИЕ ФУНКЦИИ ==============
-    function switchTab(tabName) {
-        // Обновляем активные кнопки вкладок
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        // Находим активную кнопку по tabName
-        const tabButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
-        if (tabButton) {
-            tabButton.classList.add('active');
+function switchTab(tabName) {
+    // Снимаем класс active со всех элементов навигации
+    document.querySelectorAll('.book-subsection').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Добавляем класс active только к нажатому элементу
+    const activeNavItem = document.getElementById(`nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+    if (activeNavItem) {
+        activeNavItem.classList.add('active');
+    }
+    
+    // Скрываем все вкладки, показываем активную
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(`${tabName}Tab`).classList.add('active');
+    
+    // Обновляем кнопки импорта/добавления
+    if (tabName === 'npas') {
+        document.getElementById('npaImportButtons').classList.remove('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Добавить запись';
+        document.getElementById('resetBtnText').textContent = 'Сброс НПА';
+        currentTab = 'npas';
+        // Скрываем тулбар дашбордов, показываем тулбар НПА
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        if (selectedIds.size > 0) {
+            document.getElementById('bulkToolbar').classList.remove('hidden');
+        }
+        renderGrid(); // Обновляем грид НПА
+    } else if (tabName === 'dashboards') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.remove('hidden');
+        document.getElementById('addButtonText').textContent = 'Новый дашборд';
+        document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
+        currentTab = 'dashboards';
+        // Скрываем тулбар НПА, показываем тулбар дашбордов
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        if (selectedIdsDashboards.size > 0) {
+            document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
         }
         
-        // Скрываем все вкладки, показываем активную
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.getElementById(`${tabName}Tab`).classList.add('active');
+        // ГАРАНТИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ ВКЛАДКИ ДАШБОРДОВ
+        // 1. Сначала убедимся, что данные загружены
+        if (dashboardsData.length === 0) {
+            loadDashboardsData(); // Эта функция должна загрузить данные
+        }
         
-        // Обновляем кнопки импорта/добавления
-        if (tabName === 'npas') {
-            document.getElementById('npaImportButtons').classList.remove('hidden');
-            document.getElementById('dashboardsImportButtons').classList.add('hidden');
-            document.getElementById('addButtonText').textContent = 'Добавить запись';
-            document.getElementById('resetBtnText').textContent = 'Сброс НПА';
-            currentTab = 'npas';
-            // Скрываем тулбар дашбордов, показываем тулбар НПА
-            document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-            if (selectedIds.size > 0) {
-                document.getElementById('bulkToolbar').classList.remove('hidden');
-            }
-            renderGrid(); // Обновляем грид НПА
-        } else if (tabName === 'dashboards') {
-            document.getElementById('npaImportButtons').classList.add('hidden');
-            document.getElementById('dashboardsImportButtons').classList.remove('hidden');
-            document.getElementById('addButtonText').textContent = 'Новый дашборд';
-            document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
-            currentTab = 'dashboards';
-            // Скрываем тулбар НПА, показываем тулбар дашбордов
-            document.getElementById('bulkToolbar').classList.add('hidden');
-            if (selectedIdsDashboards.size > 0) {
-                document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
-            }
+        // 2. Ждем немного, чтобы данные успели загрузиться, затем рендерим
+        setTimeout(() => {
+            // Обновляем статистику
+            updateDashboardStatsDashboards();
             
-            // ГАРАНТИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ ВКЛАДКИ ДАШБОРДОВ
-            // 1. Сначала убедимся, что данные загружены
-            if (dashboardsData.length === 0) {
-                loadDashboardsData(); // Эта функция должна загрузить данные
-            }
+            // Обновляем фильтры
+            renderStatusFiltersDashboards();
+            renderTypeFiltersDashboards();
+            renderTagsDashboards();
             
-            // 2. Ждем немного, чтобы данные успели загрузиться, затем рендерим
-            setTimeout(() => {
-                // Обновляем статистику
-                updateDashboardStatsDashboards();
-                
-                // Обновляем фильтры
-                renderStatusFiltersDashboards();
-                renderTypeFiltersDashboards();
-                renderTagsDashboards();
-                
-                // Обновляем график
-                updateChartDashboards(dashboardsData);
-                
-                // И главное - рендерим грид карточек
-                renderDashboardsGrid();
-                
-                // Обновляем тулбар массового выбора
-                updateBulkToolbarDashboards();
-                
-                console.log('Вкладка дашбордов инициализирована, данных:', dashboardsData.length);
-            }, 50);
+            // Обновляем график
+            updateChartDashboards(dashboardsData);
+            
+            // И главное - рендерим грид карточек
+            renderDashboardsGrid();
+            
+            // Обновляем тулбар массового выбора
+            updateBulkToolbarDashboards();
+            
+            console.log('Вкладка дашбордов инициализирована, данных:', dashboardsData.length);
+        }, 50);
     } else if (tabName === 'calculator') {
         document.getElementById('npaImportButtons').classList.add('hidden');
         document.getElementById('dashboardsImportButtons').classList.add('hidden');
