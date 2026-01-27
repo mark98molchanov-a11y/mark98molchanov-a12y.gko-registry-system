@@ -391,31 +391,34 @@
     <!-- Основной контент с книжной структурой -->
     <div class="book-layout">
         <!-- Боковая панель с содержанием -->
-        <aside class="book-sidebar">
-            <div class="book-section main" onclick="switchTab('npas')">
-                <div class="section-icon">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                </div>
-                <span>Отдел ГКО: База знаний</span>
-            </div>
-            
-            <div class="book-subsection active" onclick="switchTab('npas')" id="navNPA">
-                <div class="section-icon">📚</div>
-                <span>Реестр НПА</span>
-            </div>
-            
-            <div class="book-subsection" onclick="switchTab('dashboards')" id="navDashboards">
-                <div class="section-icon">📊</div>
-                <span>Дашборды Superset</span>
-            </div>
-            
-            <div class="book-subsection" onclick="switchTab('calculator')" id="navCalculator">
-                <div class="section-icon">🧮</div>
-                <span>Калькулятор Эффективности</span>
-            </div>
-        </aside>
+<aside class="book-sidebar">
+    <div class="book-section main" onclick="toggleAllSections()">
+        <div class="section-icon">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+        </div>
+        <span>Отдел ГКО: База знаний</span>
+        <div id="collapseIcon" class="ml-auto transition-transform">▼</div>
+    </div>
+    
+    <div id="subsectionsContainer">
+        <div class="book-subsection active" onclick="switchTab('npas')" id="navNPA">
+            <div class="section-icon">📚</div>
+            <span>Реестр НПА</span>
+        </div>
+        
+        <div class="book-subsection" onclick="switchTab('dashboards')" id="navDashboards">
+            <div class="section-icon">📊</div>
+            <span>Дашборды Superset</span>
+        </div>
+        
+        <div class="book-subsection" onclick="switchTab('calculator')" id="navCalculator">
+            <div class="section-icon">🧮</div>
+            <span>Калькулятор Эффективности</span>
+        </div>
+    </div>
+</aside>
 
         <!-- Основной контент -->
         <main class="book-content">
@@ -3580,7 +3583,39 @@ function exportToExcelDashboards() {
         // Реализация импорта Excel для НПА
         alert("Импорт Excel для НПА. Реализуйте эту функцию при необходимости.");
     }
+let areSubsectionsCollapsed = false;
 
+function toggleAllSections() {
+    const container = document.getElementById('subsectionsContainer');
+    const icon = document.getElementById('collapseIcon');
+    
+    if (areSubsectionsCollapsed) {
+        // Разворачиваем
+        container.style.display = 'block';
+        icon.style.transform = 'rotate(0deg)';
+        icon.textContent = '▼';
+        areSubsectionsCollapsed = false;
+    } else {
+        // Сворачиваем
+        container.style.display = 'none';
+        icon.style.transform = 'rotate(-90deg)';
+        icon.textContent = '▶';
+        areSubsectionsCollapsed = true;
+    }
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    // Устанавливаем начальное состояние (развернуто)
+    const container = document.getElementById('subsectionsContainer');
+    const icon = document.getElementById('collapseIcon');
+    
+    if (container && icon) {
+        container.style.display = 'block';
+        icon.textContent = '▼';
+        areSubsectionsCollapsed = false;
+    }
+});
     // ============== ИНИЦИАЛИЗАЦИЯ ==============
 window.addEventListener('DOMContentLoaded', function() {
     console.log('Инициализация приложения...');
