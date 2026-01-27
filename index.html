@@ -5,23 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отдел ГКО: База знаний </title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <!-- React и ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
-    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
@@ -57,7 +51,6 @@
         }
     </script>
   <style>
-        /* Существующие стили остаются без изменений */
         body { background-color: #f8fafc; }
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -188,7 +181,6 @@
         
         .chart-container { height: 260px; }
         
-        /* Стили для калькулятора */
         .calculator-tab {
             font-family: system-ui, -apple-system, sans-serif;
         }
@@ -217,7 +209,6 @@
         }
         .print-only { display: none; }
         
-        /* НОВЫЕ СТИЛИ ДЛЯ КНИЖНОЙ СТРУКТУРЫ */
         .book-layout {
             display: flex;
             min-height: calc(100vh - 80px);
@@ -362,7 +353,6 @@
 </head>
 <body class="text-slate-800 antialiased flex flex-col min-h-screen">
 
-    <!-- Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -379,7 +369,6 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <!-- Кнопки управления данными -->
                     <div class="flex gap-2">
                         <!-- Combined JSON Import -->
                         <button onclick="importJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
@@ -404,7 +393,6 @@
                             <span>Сохранить в GitHub</span>
                         </button>
                         
-                        <!-- Reset Button -->
                         <button onclick="hardResetCurrent()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
                             <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 011.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -417,11 +405,8 @@
         </div>
     </header>
 
-    <!-- Основной контент с книжной структурой -->
     <div class="book-layout">
-        <!-- Боковая панель с содержанием -->
 <aside class="book-sidebar">
-    <!-- Главный раздел "Отдел базы ГКО" (всегда сворачивается) -->
     <div class="book-section main" onclick="toggleAllSections()">
         <div class="section-icon">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -432,21 +417,17 @@
         <div id="collapseIcon" class="ml-auto transition-transform">▼</div>
     </div>
     
-    <!-- Контейнер для всех подразделов -->
     <div id="subsectionsContainer">
-        <!-- Пункт "рЕЕСТРЫ НПА" -->
         <div class="book-subsection" onclick="switchTab('npas')" id="navNPA">
             <div class="section-icon">📚</div>
             <span>Реестры НПА</span>
         </div>
         
-        <!-- Пункт "Дашборды superset" -->
         <div class="book-subsection" onclick="switchTab('dashboards')" id="navDashboards">
             <div class="section-icon">📊</div>
             <span>Дашборды superset</span>
         </div>
         
-        <!-- Раздел "Капитализация" со своим сворачиванием -->
         <div class="capitalization-section">
             <div class="book-subsection" onclick="toggleCapitalization()" id="navCapitalizationToggle">
                 <div class="section-icon">💰</div>
@@ -454,7 +435,6 @@
                 <div class="ml-auto transition-transform" id="capitalizationIcon">▼</div>
             </div>
             
-            <!-- Подпункты капитализации (изначально скрыты) -->
             <div id="capitalizationSubsections" style="display: none;">
                 <div class="book-subsubsection" onclick="switchTab('calculator')" id="navCalculator">
                     <div class="section-icon">🧮</div>
@@ -465,16 +445,12 @@
     </div>
 </aside>
 
-        <!-- Основной контент -->
         <main class="book-content">
-            <!-- Заголовок текущего раздела -->
             <div class="book-header">
                 <div>
                 </div>
                 
-                <!-- Кнопки для текущего раздела -->
                 <div class="flex items-center gap-3" id="currentSectionButtons">
-                    <!-- Кнопки импорта для активной вкладки -->
                     <div id="npaImportButtons" class="flex gap-2">
                         <button onclick="document.getElementById('importInput').click()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
                             <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -490,8 +466,6 @@
                         </button>
                         <input type="file" id="importExcelInput" accept=".csv, .xlsx, .xls" class="hidden" onchange="handleExcelImport(this)">
                     </div>
-
-                    <!-- Кнопка добавления для активной вкладки -->
                     <button id="addButton" onclick="openModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow flex items-center gap-2 active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         <span id="addButtonText">Добавить запись</span>
@@ -499,11 +473,8 @@
                 </div>
             </div>
 
-            <!-- Вкладка 1: Реестр НПА -->
             <div class="tab-content active" id="npasTab">
-                <!-- Существующий контент НПА без изменений -->
                 <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-24">
-                    <!-- DASHBOARD -->
                     <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                         <!-- Total Card -->
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="resetAllFilters()">
@@ -516,16 +487,13 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Docs Structure (Clickable) -->
                         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm md:col-span-3 flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-4">
                                  <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider">Структура текущей выборки</h3>
                                  <span class="text-[10px] text-slate-400">Нажмите для фильтрации</span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                
-                                <!-- 237-ФЗ -->
+
                                 <div onclick="setDocFilter('237-ФЗ')" class="p-3 rounded-xl bg-indigo-50 border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition relative overflow-hidden group">
                                     <div class="flex justify-between items-center mb-2">
                                         <span class="font-bold text-indigo-900 text-xs">237-ФЗ</span>
@@ -535,8 +503,6 @@
                                         <div id="barFZ" class="bg-indigo-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
                                     </div>
                                 </div>
-                                
-                                <!-- Приказ -->
                                 <div onclick="setDocFilter('Приказ № П/0336')" class="p-3 rounded-xl bg-sky-50 border border-sky-100 cursor-pointer hover:bg-sky-100 transition relative overflow-hidden group">
                                     <div class="flex justify-between items-center mb-2">
                                         <span class="font-bold text-sky-900 text-xs">Приказ П/0336</span>
@@ -546,8 +512,6 @@
                                         <div id="barOrder" class="bg-sky-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
                                     </div>
                                 </div>
-
-                                <!-- 378.2 НК РФ -->
                                 <div onclick="setDocFilter('378.2 НК РФ')" class="p-3 rounded-xl bg-amber-50 border border-amber-100 cursor-pointer hover:bg-amber-100 transition relative overflow-hidden group">
                                     <div class="flex justify-between items-center mb-2">
                                         <span class="font-bold text-amber-900 text-xs">378.2 НК РФ</span>
@@ -560,12 +524,8 @@
                             </div>
                         </div>
                     </section>
-
-                    <!-- Main Controls & Chart -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Left: Controls -->
                         <div class="lg:col-span-2 space-y-4">
-                             <!-- Search & Sort -->
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4">
                                 <div class="relative flex-grow">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
@@ -579,8 +539,6 @@
                                     <option value="dateAsc">📅 По дате вступления (старые)</option>
                                 </select>
                             </div>
-
-                            <!-- Filters -->
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
                                  <div>
                                     <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Фильтр по документу</div>
@@ -595,15 +553,11 @@
                                     <div class="flex gap-2 flex-wrap" id="targetContainer"></div>
                                  </div>
                             </div>
-                            
-                            <!-- Active Filters Bar -->
                             <div id="activeFiltersBar" class="hidden flex items-center justify-between bg-brand-50 border border-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm">
                                 <span class="font-medium">Фильтры активны</span>
                                 <button onclick="resetAllFilters()" class="text-xs font-bold uppercase hover:text-brand-900 underline">Сбросить</button>
                             </div>
                         </div>
-
-                        <!-- Right: Bar Chart -->
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
                             <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 text-center">Распределение (в текущей выборке)</h4>
                             <div class="flex-grow relative" style="min-height: 300px;">
@@ -611,8 +565,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- LIST HEADER -->
                <div class="flex items-center justify-between mt-2 mb-1">
             <div class="text-sm text-slate-500 font-medium">Список записей (<span id="filteredCount">0</span>)</div>
             <div class="flex gap-2">
@@ -625,18 +577,13 @@
                 <button onclick="toggleSelectAll()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
             </div>
         </div>
-                    
-                    <!-- GRID -->
                     <div id="cardsGrid" class="grid grid-cols-1 gap-4"></div>
                 </div>
             </div>
 
-            <!-- Вкладка 2: Дашборды Superset -->
             <div class="tab-content" id="dashboardsTab">
                 <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-24">
-                    <!-- Dashboard Summary Cards -->
                     <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <!-- Total Dashboards -->
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="resetAllDashboardsFilters()">
                             <div class="absolute right-0 top-0 w-24 h-24 bg-superset-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-superset-100"></div>
                             <div class="relative z-10">
@@ -647,8 +594,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Active Dashboards -->
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="setStatusFilterDashboards('active')">
                             <div class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-emerald-100"></div>
                             <div class="relative z-10">
@@ -659,8 +604,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- By Type Card -->
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group md:col-span-2">
                             <div class="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-amber-100"></div>
                             <div class="relative z-10">
@@ -697,12 +640,8 @@
                             </div>
                         </div>
                     </section>
-
-                    <!-- Controls & Stats -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Left: Controls -->
                         <div class="lg:col-span-2 space-y-4">
-                            <!-- Search & Sort -->
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4">
                                 <div class="relative flex-grow">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
@@ -719,8 +658,6 @@
                                     <option value="nameDesc">🔤 По названию (Я-А)</option>
                                 </select>
                             </div>
-
-                            <!-- Filters -->
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
                                 <div>
                                     <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Статус</div>
@@ -735,15 +672,11 @@
                                     <div class="flex gap-2 flex-wrap" id="tagsContainerDashboards"></div>
                                 </div>
                             </div>
-                            
-                            <!-- Active Filters Bar -->
                             <div id="activeFiltersBarDashboards" class="hidden flex items-center justify-between bg-brand-50 border border-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm">
                                 <span class="font-medium">Фильтры активны</span>
                                 <button onclick="resetAllDashboardsFilters()" class="text-xs font-bold uppercase hover:text-brand-900 underline">Сбросить</button>
                             </div>
                         </div>
-
-                        <!-- Right: Chart -->
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
                             <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 text-center">Распределение по типу анализа</h4>
                             <div class="chart-container">
@@ -751,8 +684,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- List Header -->
                     <div class="flex items-center justify-between mt-2 mb-1">
                         <div class="text-sm text-slate-500 font-medium">Дашборды (<span id="filteredCountDashboards">0</span>)</div>
                         <div class="flex gap-2">
@@ -765,27 +696,20 @@
                             <button onclick="toggleSelectAllDashboards()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
                         </div>
                     </div>
-                    
-                    <!-- DASHBOARDS GRID -->
                     <div id="cardsGridDashboards" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
                 </div>
             </div>
-
-            <!-- Вкладка 3: Калькулятор Эффективности -->
             <div class="tab-content calculator-tab" id="calculatorTab">
                 <div id="calculatorRoot"></div>
             </div>
         </main>
     </div>
-
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 mt-auto py-4">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-sm text-slate-400">&copy; 2026 Отдел ГКО</p>
         </div>
     </footer>
 
-    <!-- Bulk Toolbar for NPA -->
     <div id="bulkToolbar" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl z-40 hidden flex items-center gap-6 animate-bounce-in transition-all">
         <div class="text-sm font-medium"><span id="bulkCount">0</span> выбрано</div>
         <div class="h-4 w-px bg-slate-700"></div>
@@ -795,8 +719,6 @@
         </div>
         <button onclick="clearSelection()" class="ml-4 text-slate-500 hover:text-white text-xs">&times;</button>
     </div>
-
-    <!-- Bulk Toolbar for Dashboards -->
     <div id="bulkToolbarDashboards" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl z-40 hidden flex items-center gap-6 animate-bounce-in transition-all">
         <div class="text-sm font-medium"><span id="bulkCountDashboards">0</span> выбрано</div>
         <div class="h-4 w-px bg-slate-700"></div>
@@ -807,8 +729,6 @@
         </div>
         <button onclick="clearSelectionDashboards()" class="ml-4 text-slate-500 hover:text-white text-xs">&times;</button>
     </div>
-
-    <!-- Edit Modal for NPA -->
     <div id="modal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="relative bg-white w-full max-w-3xl mx-auto mt-10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden transform transition-all scale-95" id="modalContent">
@@ -857,8 +777,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- Bulk Modal for NPA -->
+
     <div id="bulkModal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeBulkModal()"></div>
         <div class="relative bg-white w-full max-w-md mx-auto mt-32 rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95" id="bulkModalContent">
@@ -873,8 +792,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Edit Modal for Dashboards -->
     <div id="modalDashboards" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModalDashboards()"></div>
         <div class="relative bg-white w-full max-w-3xl mx-auto mt-10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden transform transition-all scale-95" id="modalContentDashboards">
@@ -970,8 +887,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- Bulk Modal for Dashboards -->
     <div id="bulkModalDashboards" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeBulkModalDashboards()"></div>
         <div class="relative bg-white w-full max-w-md mx-auto mt-32 rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95" id="bulkModalContentDashboards">
@@ -1003,8 +918,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- GitHub Token Modal -->
     <div id="githubTokenModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50" onclick="closeGitHubModal()"></div>
         <div class="relative bg-white w-96 mx-auto mt-32 rounded-xl shadow-xl p-6">
@@ -1033,10 +946,7 @@
 </html>
 
 <script type="text/babel">
-    // Реакт компонент калькулятора
     const { useState, useEffect, useRef, useMemo } = React;
-
-    // --- ИКОНКИ ---
     const IconCalculator = ({size=16, className=""}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>;
     const IconDatabase = ({size=16, className=""}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>;
     const IconMap = ({size=16, className=""}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>;
@@ -1052,15 +962,11 @@
     const IconUpload = ({size=16}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>;
     const IconCalendar = ({size=16}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>;
     const IconCopy = ({size=16}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>;
-
-    // --- UI КОМПОНЕНТЫ ---
-
     const Card = ({ children, className = "" }) => (
         <div className={`bg-white rounded-xl border border-slate-200 shadow-sm ${className}`}>
             {children}
         </div>
     );
-
     const ResultBreakdown = ({ items, total }) => {
         const [isOpen, setIsOpen] = useState(true);
         return (
@@ -1099,7 +1005,6 @@
             </div>
         );
     };
-
     const CalculatorInputGroup = ({ label, value, onChange, placeholder, hint }) => {
         const [localValue, setLocalValue] = useState(value === 0 ? '' : value.toString());
 
@@ -1143,9 +1048,6 @@
         );
     };
 
-    // --- ГЛАВНЫЙ КОМПОНЕНТ КАЛЬКУЛЯТОРА ---
-
-
 function EfficiencyCalculator() {
     const [activeCalcTab, setActiveCalcTab] = useState(0);
     const [moneyUnit, setMoneyUnit] = useState('rub'); 
@@ -1153,7 +1055,6 @@ function EfficiencyCalculator() {
     const [calculatorData, setCalculatorData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    // ИНИЦИАЛИЗАЦИЯ - всегда загружаем из localStorage
     useEffect(() => {
         console.log('🔍 Компонент калькулятора монтируется...');
         
@@ -1164,10 +1065,8 @@ function EfficiencyCalculator() {
             if (savedDataStr) {
                 const savedData = JSON.parse(savedDataStr);
                 console.log('Данные из localStorage (парсинг):', savedData);
-                
-                // Проверяем структуру данных
+
                 if (savedData && typeof savedData === 'object') {
-                    // Преобразуем старые форматы в новый
                     const periodsList = ['2025_year', '2026_1_kv', '2026_2_kv', '2026_3_kv', '2026_4_kv'];
                     const initialDataModel = {
                         ks_otch: 0, ks_cel: 0, k_on_obsh: 0, k_21: 0, k_22: 0, k_22_1: 0, k_sud: 0, 
@@ -1177,17 +1076,11 @@ function EfficiencyCalculator() {
                         k_ps: 0, k_pdpr: 0, k_reg: 0, k_obsh_reg: 0,
                         k_vknm_gzn: 0, k_vknm_mzk: 0, k_pknm_gzn: 0, k_pknm_mzk: 0, k_uknm_gzn: 0, k_uknm_mzk: 0,
                     };
-                    
-                    // Создаем новую структуру данных
                     const newData = {};
-                    
-                    // Для каждого периода создаем запись
                     periodsList.forEach(p => {
                         if (savedData[p]) {
-                            // Если данные уже есть в правильном формате
                             newData[p] = { ...initialDataModel, ...savedData[p] };
                         } else {
-                            // Создаем пустые данные
                             newData[p] = { ...initialDataModel };
                         }
                     });
@@ -1196,7 +1089,6 @@ function EfficiencyCalculator() {
                     setCalculatorData(newData);
                 } else {
                     console.log('Нет сохраненных данных, использую начальные');
-                    // Создаем начальную структуру
                     const periodsList = ['2025_year', '2026_1_kv', '2026_2_kv', '2026_3_kv', '2026_4_kv'];
                     const initialDataModel = {
                         ks_otch: 0, ks_cel: 0, k_on_obsh: 0, k_21: 0, k_22: 0, k_22_1: 0, k_sud: 0, 
@@ -1213,7 +1105,6 @@ function EfficiencyCalculator() {
                 }
             } else {
                 console.log('localStorage пуст для калькулятора');
-                // Создаем начальную структуру
                 const periodsList = ['2025_year', '2026_1_kv', '2026_2_kv', '2026_3_kv', '2026_4_kv'];
                 const initialDataModel = {
                     ks_otch: 0, ks_cel: 0, k_on_obsh: 0, k_21: 0, k_22: 0, k_22_1: 0, k_sud: 0, 
@@ -1230,7 +1121,6 @@ function EfficiencyCalculator() {
             }
         } catch (error) {
             console.error('Ошибка загрузки данных калькулятора:', error);
-            // Создаем начальную структуру при ошибке
             const periodsList = ['2025_year', '2026_1_kv', '2026_2_kv', '2026_3_kv', '2026_4_kv'];
             const initialDataModel = {
                 ks_otch: 0, ks_cel: 0, k_on_obsh: 0, k_21: 0, k_22: 0, k_22_1: 0, k_sud: 0, 
@@ -1269,11 +1159,7 @@ function EfficiencyCalculator() {
         k_ps: 0, k_pdpr: 0, k_reg: 0, k_obsh_reg: 0,
         k_vknm_gzn: 0, k_vknm_mzk: 0, k_pknm_gzn: 0, k_pknm_mzk: 0, k_uknm_gzn: 0, k_uknm_mzk: 0,
     };
-
-    // Получаем данные для текущего периода
     const currentData = calculatorData[period] || { ...initialDataModel };
-
-    // Обновление данных
     const updateCalcData = (field, value) => {
         console.log(`Обновление данных: ${field} = ${value}`);
         
@@ -1286,11 +1172,7 @@ function EfficiencyCalculator() {
         };
         
         console.log('Новые данные:', updatedData);
-        
-        // Обновляем state
         setCalculatorData(updatedData);
-        
-        // Сохраняем в localStorage
         localStorage.setItem('gko_calculator_data_v1', JSON.stringify(updatedData));
         console.log('Сохранено в localStorage');
     };
@@ -1314,50 +1196,36 @@ function EfficiencyCalculator() {
             alert("Это первый период, нет данных для вставки.");
         }
     };
-
-        // Расчеты (С ЗАЩИТОЙ ОТ ПЕРЕВЫПОЛНЕНИЯ)
         const calculateResults = (data) => {
             const calcPerc = (num, den) => {
                 if (den === 0) return 0;
-                // Ограничение (clamp) до 100% согласно методике "предельное значение стремится к 100%"
                 let val = (num / den) * 100;
                 return Math.min(100, Math.max(0, val));
             };
-            
-            // 1. Кадастровая оценка
             let sub1_1 = calcPerc(data.ks_otch, data.ks_cel);
 
-            // 1.2
             const k_changes = data.k_21 + (data.k_22 + data.k_22_1) + data.k_sud;
             const sub1_2 = (data.k_on_obsh > 0) ? Math.min(100, Math.max(0, (1 - (k_changes / data.k_on_obsh)) * 100)) : 0;
 
-            // 1.3
             const ks_changes = data.ks_21 + (data.ks_22 + data.ks_22_1) + data.ks_sud;
             const sub1_3 = (data.ks_on_obsh > 0) ? Math.min(100, Math.max(0, (1 - (ks_changes / data.ks_on_obsh)) * 100)) : 0;
 
             const ind1 = (sub1_1 + sub1_2 + sub1_3) / 3;
-
-            // 2. Реестр недвижимости
-            // 2.1
             const bad_net = Math.max(0, data.k_bezrp - data.k_mkd - data.k_vyyavl);
             const sub2_1 = (data.k_on_obsh_reestr > 0) ? Math.min(100, Math.max(0, (1 - (bad_net / data.k_on_obsh_reestr)) * 100)) : 0;
             
-            // 2.2
             const sub2_2 = (data.k_on_obsh_reestr > 0) ? Math.min(100, Math.max(0, (1 - (data.k_nkor / data.k_on_obsh_reestr)) * 100)) : 0;
             
             const ind2 = (sub2_1 + sub2_2) / 2;
 
-            // 3. Вовлечение земель
             let sub3_1 = calcPerc(data.s_vyyavl, data.s_ter);
             const sub3_2 = calcPerc(data.s_vuf, data.s_gosmun);
             const ind3 = (sub3_1 + sub3_2) / 2;
 
-            // 4. НСПД
             let sub4_1 = calcPerc(data.k_ps, data.k_pdpr);
             const sub4_2 = calcPerc(data.k_reg, data.k_obsh_reg);
             const ind4 = (sub4_1 + sub4_2) / 2;
 
-            // 5. Контроль
             const violations_total = data.k_vknm_gzn + data.k_vknm_mzk;
             const checks_total = data.k_pknm_gzn + data.k_pknm_mzk;
             const fixed_total = data.k_uknm_gzn + data.k_uknm_mzk;
@@ -1367,7 +1235,6 @@ function EfficiencyCalculator() {
             
             const ind5 = (sub5_1 + sub5_2) / 2;
 
-            // ИТОГ: Взвешенная сумма
             const total = (ind1 * 0.25) + (ind2 * 0.25) + (ind3 * 0.25) + (ind4 * 0.125) + (ind5 * 0.125);
 
             return { ind1, ind2, ind3, ind4, ind5, total, sub1_1, sub1_2, sub1_3, sub2_1, sub2_2, sub3_1, sub3_2, sub4_1, sub4_2, sub5_1, sub5_2 };
@@ -1380,7 +1247,6 @@ function EfficiencyCalculator() {
                 return;
             }
             
-            // Создаем пустые данные для текущего периода
             const emptyData = {
                 ks_otch: 0, ks_cel: 0, k_on_obsh: 0, k_21: 0, k_22: 0, k_22_1: 0, k_sud: 0, 
                 ks_on_obsh: 0, ks_21: 0, ks_22: 0, ks_22_1: 0, ks_sud: 0,
@@ -1390,13 +1256,11 @@ function EfficiencyCalculator() {
                 k_vknm_gzn: 0, k_vknm_mzk: 0, k_pknm_gzn: 0, k_pknm_mzk: 0, k_uknm_gzn: 0, k_uknm_mzk: 0,
             };
             
-            // Обновляем данные только для текущего периода
             const updatedData = {
                 ...calculatorData,
                 [period]: emptyData
             };
             
-            // Обновляем state и сохраняем
             setCalculatorData(updatedData);
             localStorage.setItem('gko_calculator_data_v1', JSON.stringify(updatedData));
             
@@ -1422,7 +1286,6 @@ function EfficiencyCalculator() {
         return (
             <div className="max-w-7xl mx-auto p-2 md:p-6">
 
-                {/* ШАПКА */}
                 <header className="mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col xl:flex-row justify-between items-center gap-4 no-print">
                     <div>
                         <h1 className="text-xl font-bold text-slate-900">Калькулятор Эффективности</h1>
@@ -1457,7 +1320,6 @@ function EfficiencyCalculator() {
 
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                     
-                    {/* ОСНОВНАЯ ОБЛАСТЬ ВВОДА */}
                     <div className="xl:col-span-3 space-y-4">
                         
                         <div className="flex overflow-x-auto gap-2 pb-1 no-scrollbar no-print">
@@ -1489,7 +1351,6 @@ function EfficiencyCalculator() {
                                 </div>
                             )}
 
-                            {/* 1. КАДАСТР */}
                             {activeCalcTab === 0 && (
                                 <>
                                     <div className="grid md:grid-cols-2 gap-4">
@@ -1516,7 +1377,6 @@ function EfficiencyCalculator() {
                                     <ResultBreakdown total={results.ind1} items={[{ label: "5.1 И_сум", desc: "Достижение цели 2030", value: results.sub1_1 }, { label: "5.2 И_изм.к", desc: "Снижение кол-ва изменений", value: results.sub1_2 }, { label: "5.3 И_изм.кс", desc: "Снижение суммы изменений", value: results.sub1_3 }]} />
                                 </>
                             )}
-                            {/* 2. РЕЕСТР */}
                             {activeCalcTab === 1 && (
                                 <>
                                     <div className="space-y-4">
@@ -1531,7 +1391,6 @@ function EfficiencyCalculator() {
                                     <ResultBreakdown total={results.ind2} items={[{ label: "6.1 И_он", desc: "Доля объектов с правами", value: results.sub2_1 }, { label: "6.2 И_кач", desc: "Качество сведений ЕГРН", value: results.sub2_2 }]} />
                                 </>
                             )}
-                            {/* 3. ЗЕМЛЯ */}
                             {activeCalcTab === 2 && (
                                 <>
                                     <div className="space-y-4">
@@ -1549,7 +1408,6 @@ function EfficiencyCalculator() {
                                     <ResultBreakdown total={results.ind3} items={[{ label: "7.1 И_выявл", desc: "Эффективность выявления", value: results.sub3_1 }, { label: "7.2 И_оборот", desc: "Эффективность вовлечения", value: results.sub3_2 }]} />
                                 </>
                             )}
-                            {/* 4. НСПД */}
                             {activeCalcTab === 3 && (
                                 <>
                                     <div className="space-y-4">
@@ -1567,7 +1425,6 @@ function EfficiencyCalculator() {
                                     <ResultBreakdown total={results.ind4} items={[{ label: "8.1 И_пд", desc: "Выполнение плана", value: results.sub4_1 }, { label: "8.2 И_усл", desc: "Цифровые услуги", value: results.sub4_2 }]} />
                                 </>
                             )}
-                            {/* 5. КОНТРОЛЬ */}
                             {activeCalcTab === 4 && (
                                 <>
                                     <div className="grid md:grid-cols-2 gap-4">
@@ -1588,7 +1445,6 @@ function EfficiencyCalculator() {
                                 </>
                             )}
 
-                            {/* МЕТОДИКА (ОБНОВЛЕННЫЙ ТЕКСТ) */}
                             {activeCalcTab === 5 && (
                                 <div className="space-y-6 text-slate-800 methodology-text">
                                     <div className="border-b pb-4">
@@ -1757,8 +1613,6 @@ function EfficiencyCalculator() {
                             )}
                         </Card>
                     </div>
-
-                    {/* ПРАВАЯ КОЛОНКА - ИТОГОВАЯ ТАБЛИЦА */}
                     <div className="xl:col-span-1">
                         <Card className="p-4 bg-white border-2 border-slate-200 shadow-xl sticky top-4 text-slate-800 print:shadow-none print:border print:border-slate-300">
                             <h2 className="text-xs uppercase text-slate-500 font-bold mb-1 print:text-slate-600">Итоговая эффективность</h2>
@@ -1814,7 +1668,6 @@ function initCalculator() {
 </script>
 
 <script>
-    // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ВСЕГО СКРИПТА
     window.GITHUB_RAW_URL = 'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main/';
     
     const STORAGE_KEY_NPA = 'rosreestr_npa_viz_v5';
@@ -1824,10 +1677,8 @@ function initCalculator() {
     const now = Date.now();
     const GITHUB_SYNC_ENABLED = true;
     
-    // Используем глобальную переменную
     const GITHUB_SYNC_API = window.GITHUB_RAW_URL;
 
-    // Автоматическая загрузка из GitHub при открытии
 async function loadFromGitHub() {
     if (!GITHUB_SYNC_ENABLED) {
         loadData();
@@ -1846,7 +1697,6 @@ async function loadFromGitHub() {
         
         const json = await response.json();
         
-        // Загрузка НПА
         if (json.npas && Array.isArray(json.npas)) {
             appData = [...json.npas];
             localStorage.setItem(STORAGE_KEY_NPA, JSON.stringify(appData));
@@ -1854,7 +1704,6 @@ async function loadFromGitHub() {
             renderGrid();
         }
         
-        // Загрузка дашбордов
         if (json.dashboards && Array.isArray(json.dashboards)) {
             dashboardsData = [...json.dashboards];
             localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboardsData));
@@ -1864,11 +1713,9 @@ async function loadFromGitHub() {
             }
         }
         
-        // ЗАГРУЗКА ДАННЫХ КАЛЬКУЛЯТОРА
         if (json.calculator) {
             console.log('Данные калькулятора найдены в GitHub:', json.calculator);
             
-            // Сохраняем в localStorage
             localStorage.setItem(STORAGE_KEY_CALCULATOR, JSON.stringify(json.calculator));
             
             console.log('Данные калькулятора загружены из GitHub');
@@ -1883,17 +1730,14 @@ async function loadFromGitHub() {
     }
 }
     
-    // Сохранение в GitHub
     let currentGitHubToken = null;
 
-    // Показ модального окна
     function showGitHubTokenModal() {
         document.getElementById('githubTokenInput').value = '';
         document.getElementById('githubTokenModal').classList.remove('hidden');
         document.getElementById('githubTokenInput').focus();
     }
 
-    // Закрытие модального окна
     function closeGitHubModal() {
         document.getElementById('githubTokenModal').classList.add('hidden');
         document.getElementById('githubTokenInput').value = '';
@@ -1910,26 +1754,21 @@ async function loadFromGitHub() {
         
         currentGitHubToken = token;
         
-        // Собираем данные со всех вкладок
         const allData = {
             version: "1.0",
             exportDate: new Date().toISOString(),
             npas: appData,
             dashboards: dashboardsData,
-            // Добавляем данные калькулятора из localStorage
             calculator: JSON.parse(localStorage.getItem(STORAGE_KEY_CALCULATOR) || '{}')
         };
         
         const content = JSON.stringify(allData, null, 2);
-        
-        // Настройки
         const owner = 'mark98molchanov-a11y';
         const repo = 'mark98molchanov-a12y.gko-registry-system';
         const path = 'gko_all_data.json';
         const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
         
         try {
-            // Получаем текущий файл (если есть)
             let sha = null;
             try {
                 const res = await fetch(apiUrl, {
@@ -1944,7 +1783,6 @@ async function loadFromGitHub() {
                 }
             } catch (e) { /* Файл не существует */ }
             
-            // Сохраняем файл
             const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
@@ -1960,16 +1798,13 @@ async function loadFromGitHub() {
             });
             
             if (response.ok) {
-                // Закрываем модалку
                 closeGitHubModal();
                 
-                // Просто зеленая надпись
                 const success = document.createElement('div');
                 success.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
                 success.textContent = '✅ Успешно сохранено';
                 document.body.appendChild(success);
                 
-                // Автоматически скрываем через 3 секунды
                 setTimeout(() => {
                     success.remove();
                 }, 3000);
@@ -1985,10 +1820,7 @@ async function loadFromGitHub() {
             document.getElementById('githubTokenInput').focus();
         }
     }
-    
-    // Вспомогательная функция для уведомлений
 function showNotification(message, type = 'info') {
-    // Создаем временное уведомление
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
         type === 'success' ? 'bg-emerald-500 text-white' :
@@ -2004,8 +1836,6 @@ function showNotification(message, type = 'info') {
     `;
     
     document.body.appendChild(notification);
-    
-    // Автоматическое скрытие через 5 секунд
     setTimeout(() => {
         if (notification.parentElement) {
             notification.style.opacity = '0';
@@ -2018,8 +1848,6 @@ function showNotification(message, type = 'info') {
         }
     }, 5000);
 }
-
-    // Глобальные переменные для НПА
     let appData = [];
     let currentDocFilter = null;
     let currentTypeFilter = null;
@@ -2027,8 +1855,6 @@ function showNotification(message, type = 'info') {
     let selectedIds = new Set();
     let editId = null;
     let chartInstance = null;
-
-    // Глобальные переменные для дашбордов
     let dashboardsData = [];
     let currentStatusFilterDashboards = null;
     let currentTypeFilterDashboards = null;
@@ -2037,12 +1863,9 @@ function showNotification(message, type = 'info') {
     let editIdDashboards = null;
     let chartInstanceDashboards = null;
 
-    // Текущая активная вкладка
     let currentTab = 'npas';
 
-    // ============== ОБЪЕДИНЕННЫЕ JSON ФУНКЦИИ ==============
 function exportJson() {
-    // Получаем актуальные данные калькулятора из localStorage
     const calculatorData = JSON.parse(localStorage.getItem(STORAGE_KEY_CALCULATOR) || '{}');
     
     const allData = {
@@ -2138,12 +1961,10 @@ function exportJson() {
         input.click();
     }
 function switchTab(tabName) {
-    // Убираем active со всех элементов навигации
     document.querySelectorAll('.book-subsection, .book-subsubsection').forEach(el => {
         el.classList.remove('active');
     });
     
-    // Добавляем active только к нажатому элементу
     const navIdMap = {
         'npas': 'navNPA',
         'dashboards': 'navDashboards', 
@@ -2156,13 +1977,11 @@ function switchTab(tabName) {
         activeNavItem.classList.add('active');
     }
     
-    // Скрываем все вкладки, показываем активную
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
     });
     document.getElementById(`${tabName}Tab`).classList.add('active');
     
-    // Обновляем кнопки импорта/добавления
     if (tabName === 'npas') {
         document.getElementById('npaImportButtons').classList.remove('hidden');
         document.getElementById('dashboardsImportButtons').classList.add('hidden');
@@ -2231,7 +2050,6 @@ function switchTab(tabName) {
         if (dashboardsData.length === 0) {
             loadDashboardsData();
         } else {
-            // Обновляем все элементы вкладки
             updateDashboardStatsDashboards();
             renderStatusFiltersDashboards();
             renderTypeFiltersDashboards();
@@ -2240,8 +2058,6 @@ function switchTab(tabName) {
             renderDashboardsGrid();
         }
     }
-    
-    // ============== ФУНКЦИИ ДЛЯ НПА ==============
     function loadData() {
         const saved = localStorage.getItem(STORAGE_KEY_NPA);
         if (saved) {
@@ -2580,7 +2396,6 @@ function switchTab(tabName) {
         } 
     }
     function exportToExcelNPA() {
-        // Используем текущие фильтры для выгрузки
         const search = document.getElementById('searchInput').value.toLowerCase();
         const sortMode = document.getElementById('sortSelect').value;
         
@@ -2595,15 +2410,12 @@ function switchTab(tabName) {
             return matchesDoc && matchesType && matchesTarget && matchesSearch;
         });
 
-        // Применяем сортировку как в интерфейсе
         filtered.sort((a, b) => {
             if (sortMode === 'dateDesc') return parseDate(b.date) - parseDate(a.date);
             if (sortMode === 'dateAsc') return parseDate(a.date) - parseDate(b.date);
             if (sortMode === 'lastUpdated') return (b.updated || 0) - (a.updated || 0);
             return a.id - b.id;
         });
-
-        // Подготавливаем данные для Excel
         const data = filtered.map(item => ({
             'Документ': item.doc || '',
             'Норма/Статья': item.norm || '',
@@ -2619,13 +2431,9 @@ function switchTab(tabName) {
             'Новая редакция': item.fullNew || '',
             'Дата обновления': item.updated ? new Date(item.updated).toLocaleString('ru-RU') : ''
         }));
-        
-        // Создаем лист Excel
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Реестр НПА");
-        
-        // Настраиваем ширину колонок
         ws['!cols'] = [
             { wch: 15 },    // Документ
             { wch: 20 },    // Норма/Статья
@@ -2641,17 +2449,11 @@ function switchTab(tabName) {
             { wch: 30 },    // Новая редакция
             { wch: 20 }     // Дата обновления
         ];
-        
-        // Генерируем имя файла с датой
         const fileName = `Реестр_НПА_${new Date().toISOString().split('T')[0]}.xlsx`;
-        
-        // Скачиваем файл
         XLSX.writeFile(wb, fileName);
-        
-        // Показываем уведомление
+
         showNotification(`Экспортировано ${filtered.length} записей в Excel`, 'success');
     }
-    // ============== ФУНКЦИИ ДЛЯ ДАШБОРДОВ ==============
     function loadDashboardsData() {
         const saved = localStorage.getItem(STORAGE_KEY_DASHBOARDS);
         if (saved) {
@@ -2663,8 +2465,6 @@ function switchTab(tabName) {
         } else {
             dashboardsData = [];
         }
-        
-        // Обновляем статистику и фильтры
         updateDashboardStatsDashboards();
         renderStatusFiltersDashboards();
         renderTypeFiltersDashboards();
@@ -2676,7 +2476,6 @@ function switchTab(tabName) {
             updateChartDashboards(dashboardsData);
         }
     }
-
     function saveDashboardsData() {
         localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboardsData));
         renderDashboardsGrid();
@@ -3307,11 +3106,9 @@ function switchTab(tabName) {
     }
 
 function exportToExcelDashboards() {
-    // Используем текущие фильтры для выгрузки
     const search = document.getElementById('searchInputDashboards').value.toLowerCase();
     const sortMode = document.getElementById('sortSelectDashboards').value;
     
-    // Фильтруем данные как в интерфейсе
     let filtered = dashboardsData.filter(item => {
         const matchesStatus = !currentStatusFilterDashboards || item.status === currentStatusFilterDashboards;
         const matchesType = !currentTypeFilterDashboards || item.analysisType === currentTypeFilterDashboards;
@@ -3325,7 +3122,6 @@ function exportToExcelDashboards() {
         return matchesStatus && matchesType && matchesTag && matchesSearch;
     });
 
-    // Применяем сортировку как в интерфейсе
     filtered.sort((a, b) => {
         switch(sortMode) {
             case 'nameAsc': return a.title.localeCompare(b.title);
@@ -3335,8 +3131,6 @@ function exportToExcelDashboards() {
             default: return (b.createdDate || 0) - (a.createdDate || 0);
         }
     });
-
-    // Подготавливаем данные для Excel
     const data = filtered.map(d => ({
         'Название': d.title,
         'Ссылка': d.url,
@@ -3351,12 +3145,10 @@ function exportToExcelDashboards() {
         'Комментарии': d.notes || ''
     }));
     
-    // Создаем лист Excel
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Дашборды");
     
-    // Настраиваем ширину колонок
     const maxWidth = data.reduce((w, r) => Math.max(w, r['Название']?.length || 0), 10);
     ws['!cols'] = [
         { wch: maxWidth },     // Название
@@ -3372,13 +3164,9 @@ function exportToExcelDashboards() {
         { wch: 30 }            // Комментарии
     ];
     
-    // Генерируем имя файла с датой
     const fileName = `Дашборды_GKO_${new Date().toISOString().split('T')[0]}.xlsx`;
     
-    // Скачиваем файл
     XLSX.writeFile(wb, fileName);
-    
-    // Показываем уведомление С КОЛИЧЕСТВОМ ЗАПИСЕЙ
     showNotification(`Экспортировано ${filtered.length} дашбордов в Excel`, 'success');
 }
 
@@ -3386,24 +3174,15 @@ function exportToExcelDashboards() {
     function parseExcelDate(value, rowIndex) {
         if (!value) return Date.now();
         
-        // Если это число (серийная дата Excel)
         if (typeof value === 'number') {
-            // Excel использует серийные даты, где 1 = 1 января 1900
-            // JavaScript использует миллисекунды с 1 января 1970
-            const excelEpoch = new Date(1899, 11, 30); // 30 декабря 1899
+            const excelEpoch = new Date(1899, 11, 30); 
             const jsDate = new Date(excelEpoch.getTime() + value * 86400000);
             return jsDate.getTime();
         }
-        
-        // Если это строка
         if (typeof value === 'string') {
-            // Пробуем разные форматы дат
             const formats = [
-                // DD.MM.YYYY
                 /(\d{1,2})\.(\d{1,2})\.(\d{4})/,
-                // YYYY-MM-DD
                 /(\d{4})-(\d{1,2})-(\d{1,2})/,
-                // MM/DD/YYYY
                 /(\d{1,2})\/(\d{1,2})\/(\d{4})/
             ];
             
@@ -3413,23 +3192,18 @@ function exportToExcelDashboards() {
                     let day, month, year;
                     
                     if (regex.source.includes('YYYY-MM-DD')) {
-                        // Формат YYYY-MM-DD
                         year = parseInt(match[1], 10);
                         month = parseInt(match[2], 10) - 1;
                         day = parseInt(match[3], 10);
                     } else if (regex.source.includes('MM/DD/YYYY')) {
-                        // Формат MM/DD/YYYY
                         month = parseInt(match[1], 10) - 1;
                         day = parseInt(match[2], 10);
                         year = parseInt(match[3], 10);
                     } else {
-                        // Формат DD.MM.YYYY
                         day = parseInt(match[1], 10);
                         month = parseInt(match[2], 10) - 1;
                         year = parseInt(match[3], 10);
                     }
-                    
-                    // Проверяем валидность даты
                     if (year >= 1900 && year <= 2100 && month >= 0 && month <= 11) {
                         const date = new Date(year, month, day);
                         if (!isNaN(date.getTime())) {
@@ -3438,15 +3212,11 @@ function exportToExcelDashboards() {
                     }
                 }
             }
-            
-            // Пробуем стандартный парсинг
             const parsed = new Date(value);
             if (!isNaN(parsed.getTime())) {
                 return parsed.getTime();
             }
         }
-        
-        // Если это объект Date
         if (value instanceof Date) {
             return value.getTime();
         }
@@ -3465,17 +3235,16 @@ function exportToExcelDashboards() {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { 
                     type: 'array',
-                    cellDates: true, // ВАЖНО: парсим даты как объекты Date
-                    cellNF: false    // Отключаем форматирование чисел для чистых данных
+                    cellDates: true, 
+                    cellNF: false    
                 });
                 
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
                 
-                // Используем raw: false чтобы получать даты как объекты Date
                 const json = XLSX.utils.sheet_to_json(sheet, { 
                     defval: '',
-                    raw: false,      // ВАЖНО: преобразует даты в строки
-                    dateNF: 'dd.mm.yyyy' // Формат для преобразования дат
+                    raw: false,     
+                    dateNF: 'dd.mm.yyyy' 
                 });
                 
                 if (!json || json.length === 0) {
@@ -3492,13 +3261,11 @@ function exportToExcelDashboards() {
                         return;
                     }
                     
-                    // Определяем статус
                     const statusText = row['Статус']?.toString().toLowerCase() || '';
                     let status = 'draft';
                     if (statusText.includes('актив')) status = 'active';
                     if (statusText.includes('архив')) status = 'archived';
                     
-                    // Определяем тип анализа
                     const typeText = row['Тип анализа']?.toString().toLowerCase() || '';
                     let analysisType = 'analytical';
                     if (typeText.includes('монитор')) analysisType = 'monitoring';
@@ -3507,7 +3274,6 @@ function exportToExcelDashboards() {
                     if (typeText.includes('прогноз')) analysisType = 'forecast';
                     if (typeText.includes('деятельность гбу') || typeText.includes('гбу')) analysisType = 'audit';
                     
-                    // Определяем периодичность обновления
                     const frequencyText = row['Периодичность обновления']?.toString().toLowerCase() || 
                                          row['Частота обновления']?.toString().toLowerCase() || 
                                          row['Периодичность']?.toString().toLowerCase() || '';
@@ -3518,18 +3284,15 @@ function exportToExcelDashboards() {
                     if (frequencyText.includes('ежемесячно') || frequencyText.includes('monthly')) updateFrequency = 'monthly';
                     if (frequencyText.includes('квартал') || frequencyText.includes('quarterly')) updateFrequency = 'quarterly';
                     
-                    // Обрабатываем теги
                     const tags = row['Теги'] ? 
                         row['Теги'].toString().split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : 
                         [];
-                    
-                    // ПРАВИЛЬНО ОБРАБАТЫВАЕМ ДАТУ СОЗДАНИЯ
+                
                     let createdDate = Date.now();
                     if (row['Дата создания']) {
                         try {
                             createdDate = parseExcelDate(row['Дата создания'], index);
                             
-                            // Дополнительная проверка
                             if (createdDate > Date.now() + 31536000000) { // Больше года в будущем
                                 console.warn(`Дата создания в строке ${index + 1} кажется некорректной, используется текущая дата`);
                                 createdDate = Date.now();
@@ -3603,8 +3366,6 @@ function exportToExcelDashboards() {
             loadDashboardsData();
         }
     }
-    
-    // Функция для импорта файлов НПА (если нужно)
     function handleFileImport(input) {
         // Реализация импорта Excel для НПА
         alert("Импорт Excel для НПА. Реализуйте эту функцию при необходимости.");
@@ -3616,13 +3377,11 @@ function toggleAllSections() {
     const icon = document.getElementById('collapseIcon');
     
     if (areSubsectionsCollapsed) {
-        // Разворачиваем все
         container.style.display = 'block';
         icon.style.transform = 'rotate(0deg)';
         icon.textContent = '▼';
         areSubsectionsCollapsed = false;
         
-        // Если Капитализация была развернута, восстанавливаем её состояние
         if (isCapitalizationExpanded) {
             const capContainer = document.getElementById('capitalizationSubsections');
             const capIcon = document.getElementById('capitalizationIcon');
@@ -3633,7 +3392,6 @@ function toggleAllSections() {
             }
         }
     } else {
-        // Сворачиваем все
         container.style.display = 'none';
         icon.style.transform = 'rotate(-90deg)';
         icon.textContent = '▶';
@@ -3647,13 +3405,11 @@ function toggleCapitalization() {
     const icon = document.getElementById('capitalizationIcon');
     
     if (isCapitalizationExpanded) {
-        // Сворачиваем
         container.style.display = 'none';
         icon.style.transform = 'rotate(0deg)';
         icon.textContent = '▼';
         isCapitalizationExpanded = false;
     } else {
-        // Разворачиваем
         container.style.display = 'block';
         icon.style.transform = 'rotate(180deg)';
         icon.textContent = '▲';
@@ -3661,11 +3417,8 @@ function toggleCapitalization() {
     }
 }
 
-// Инициализация при загрузке
 window.addEventListener('DOMContentLoaded', function() {
     console.log('Инициализация приложения...');
-    
-    // 1. Инициализация навигационной панели
     const container = document.getElementById('subsectionsContainer');
     const icon = document.getElementById('collapseIcon');
     const capitalizationContainer = document.getElementById('capitalizationSubsections');
@@ -3678,24 +3431,18 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     
     if (capitalizationContainer && capitalizationIcon) {
-        // По умолчанию капитализация свернута
         capitalizationContainer.style.display = 'none';
         capitalizationIcon.textContent = '▼';
         isCapitalizationExpanded = false;
     }
-    
-    // 2. Проверить, если в URL есть хэш для калькулятора
     const urlHash = window.location.hash;
     if (urlHash === '#calculator' || urlHash === '#capitalization') {
-        // Развернуть раздел Капитализация при открытии калькулятора
         if (capitalizationContainer && capitalizationIcon) {
             capitalizationContainer.style.display = 'block';
             capitalizationIcon.style.transform = 'rotate(180deg)';
             capitalizationIcon.textContent = '▲';
             isCapitalizationExpanded = true;
         }
-        
-        // Активировать калькулятор
         const calculatorNav = document.getElementById('navCalculator');
         if (calculatorNav) {
             calculatorNav.classList.add('active');
@@ -3707,16 +3454,11 @@ window.addEventListener('DOMContentLoaded', function() {
             npaNav.classList.add('active');
         }
     }
-    
-    // 3. Загружаем локальные данные для НПА и дашбордов
     loadData();
     loadDashboardsData();
     
-    // 4. Пытаемся загрузить из GitHub (включая данные калькулятора)
     loadFromGitHub().then(() => {
         console.log('✅ Все данные загружены из GitHub');
-        
-        // 5. Автоматически переключаемся на калькулятор если в URL есть хэш
         if (urlHash === '#calculator') {
             setTimeout(() => {
                 switchTab('calculator');
@@ -3726,26 +3468,20 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log('⚠️ GitHub недоступен:', error.message);
         console.log('Используются локальные данные из localStorage');
         
-        // Даже если GitHub недоступен, калькулятор загрузит данные из localStorage
-        // Автоматически переключаемся на калькулятор если в URL есть хэш
         if (urlHash === '#calculator') {
             setTimeout(() => {
                 switchTab('calculator');
             }, 100);
         }
     });
-    
-    // 6. Инициализация обработчиков для навигации по хэшу
     window.addEventListener('hashchange', function() {
         const hash = window.location.hash;
         console.log('Hash changed to:', hash);
         
         if (hash === '#calculator') {
-            // Развернуть раздел Капитализация
             if (capitalizationContainer && capitalizationIcon && !isCapitalizationExpanded) {
                 toggleCapitalization();
             }
-            // Переключить на калькулятор
             setTimeout(() => {
                 switchTab('calculator');
             }, 50);
