@@ -56,8 +56,8 @@
             }
         }
     </script>
-
-    <style>
+  <style>
+        /* Существующие стили остаются без изменений */
         body { background-color: #f8fafc; }
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -216,6 +216,119 @@
             .border { border: 1px solid #ddd !important; }
         }
         .print-only { display: none; }
+        
+        /* НОВЫЕ СТИЛИ ДЛЯ КНИЖНОЙ СТРУКТУРЫ */
+        .book-layout {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .book-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 1px 0 5px rgba(0,0,0,0.05);
+        }
+        
+        .book-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        .book-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .book-section.main {
+            background: linear-gradient(135deg, #0c4a6e 0%, #075985 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .book-section.main:hover {
+            background: linear-gradient(135deg, #075985 0%, #0c4a6e 100%);
+        }
+        
+        .book-subsection {
+            padding: 1rem 1.5rem 1rem 3rem;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .book-subsection:hover {
+            background: #f1f5f9;
+            color: #0ea5e9;
+        }
+        
+        .book-subsection.active {
+            background: #e0f2fe;
+            color: #0284c7;
+            border-left: 4px solid #0ea5e9;
+            font-weight: 600;
+        }
+        
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .book-header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .book-header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .book-header-subtitle {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .book-sidebar {
+                width: 240px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .book-layout {
+                flex-direction: column;
+            }
+            
+            .book-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                max-height: 300px;
+            }
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased flex flex-col min-h-screen">
@@ -240,19 +353,19 @@
                     <!-- Кнопки управления данными -->
                     <div class="flex gap-2">
                         <!-- Combined JSON Import -->
-<button onclick="importJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
-    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-    </svg>
-    <span>Импорт JSON</span>
-</button>
+                        <button onclick="importJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
+                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                            </svg>
+                            <span>Импорт JSON</span>
+                        </button>
 
-<button onclick="exportJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
-    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-    </svg>
-    <span>Экспорт JSON</span>
-</button>
+                        <button onclick="exportJson()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>Экспорт JSON</span>
+                        </button>
 
                         <!-- Save to GitHub -->
                         <button onclick="showGitHubTokenModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow flex items-center gap-2">
@@ -270,7 +383,60 @@
                             <span id="resetBtnText">Сброс</span>
                         </button>
                     </div>
-                    
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент с книжной структурой -->
+    <div class="book-layout">
+        <!-- Боковая панель с содержанием -->
+        <aside class="book-sidebar">
+            <div class="book-section main" onclick="switchTab('npas')">
+                <div class="section-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <span>Отдел ГКО: База знаний</span>
+            </div>
+            
+            <div class="book-subsection active" onclick="switchTab('npas')" id="navNPA">
+                <div class="section-icon">📚</div>
+                <span>Реестр НПА</span>
+            </div>
+            
+            <div class="book-subsection" onclick="switchTab('dashboards')" id="navDashboards">
+                <div class="section-icon">📊</div>
+                <span>Дашборды Superset</span>
+            </div>
+            
+            <div class="book-subsection" onclick="switchTab('calculator')" id="navCalculator">
+                <div class="section-icon">🧮</div>
+                <span>Калькулятор Эффективности</span>
+            </div>
+            
+            <!-- Пример дополнительных разделов (опционально) -->
+            <div class="book-section" style="margin-top: auto; border-top: 2px solid #e2e8f0;">
+                <div class="text-xs text-slate-500 px-4 py-2">
+                    <div class="font-medium mb-1">Статистика</div>
+                    <div>Записей НПА: <span id="sidebarNpaCount">0</span></div>
+                    <div>Дашбордов: <span id="sidebarDashboardCount">0</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="book-content">
+            <!-- Заголовок текущего раздела -->
+            <div class="book-header">
+                <div>
+                    <div class="book-header-title" id="currentSectionTitle">Реестр НПА</div>
+                    <div class="book-header-subtitle" id="currentSectionSubtitle">База нормативно-правовых актов отдела ГКО</div>
+                </div>
+                
+                <!-- Кнопки для текущего раздела -->
+                <div class="flex items-center gap-3" id="currentSectionButtons">
                     <!-- Кнопки импорта для активной вкладки -->
                     <div id="npaImportButtons" class="flex gap-2">
                         <button onclick="document.getElementById('importInput').click()" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
@@ -295,293 +461,287 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Tabs Navigation -->
-            <div class="flex border-b border-slate-200 -mb-px">
-                <button onclick="switchTab('npas')" class="tab-btn active">📚 Реестр НПА</button>
-                <button onclick="switchTab('dashboards')" class="tab-btn">📊 Дашборды Superset</button>
-                <button onclick="switchTab('calculator')" class="tab-btn">🧮 Калькулятор Эффективности</button>
+
+            <!-- Вкладка 1: Реестр НПА -->
+            <div class="tab-content active" id="npasTab">
+                <!-- Существующий контент НПА без изменений -->
+                <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-24">
+                    <!-- DASHBOARD -->
+                    <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <!-- Total Card -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="resetAllFilters()">
+                            <div class="absolute right-0 top-0 w-24 h-24 bg-brand-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-brand-100"></div>
+                            <div class="relative z-10">
+                                <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Найдено в базе</h3>
+                                <div class="text-4xl font-extrabold text-slate-900" id="statTotal">0</div>
+                                <div class="mt-4 flex items-center text-xs text-brand-600 font-medium">
+                                    <span class="w-2 h-2 rounded-full bg-brand-500 mr-2"></span> Записи отображены
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Docs Structure (Clickable) -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm md:col-span-3 flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-4">
+                                 <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider">Структура текущей выборки</h3>
+                                 <span class="text-[10px] text-slate-400">Нажмите для фильтрации</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                
+                                <!-- 237-ФЗ -->
+                                <div onclick="setDocFilter('237-ФЗ')" class="p-3 rounded-xl bg-indigo-50 border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition relative overflow-hidden group">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="font-bold text-indigo-900 text-xs">237-ФЗ</span>
+                                        <span class="bg-white/80 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countFZ">0</span>
+                                    </div>
+                                    <div class="w-full bg-indigo-200 rounded-full h-1 overflow-hidden">
+                                        <div id="barFZ" class="bg-indigo-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Приказ -->
+                                <div onclick="setDocFilter('Приказ № П/0336')" class="p-3 rounded-xl bg-sky-50 border border-sky-100 cursor-pointer hover:bg-sky-100 transition relative overflow-hidden group">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="font-bold text-sky-900 text-xs">Приказ П/0336</span>
+                                        <span class="bg-white/80 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countOrder">0</span>
+                                    </div>
+                                    <div class="w-full bg-sky-200 rounded-full h-1 overflow-hidden">
+                                        <div id="barOrder" class="bg-sky-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- 378.2 НК РФ -->
+                                <div onclick="setDocFilter('378.2 НК РФ')" class="p-3 rounded-xl bg-amber-50 border border-amber-100 cursor-pointer hover:bg-amber-100 transition relative overflow-hidden group">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="font-bold text-amber-900 text-xs">378.2 НК РФ</span>
+                                        <span class="bg-white/80 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countNK">0</span>
+                                    </div>
+                                    <div class="w-full bg-amber-200 rounded-full h-1 overflow-hidden">
+                                        <div id="barNK" class="bg-amber-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Main Controls & Chart -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left: Controls -->
+                        <div class="lg:col-span-2 space-y-4">
+                             <!-- Search & Sort -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4">
+                                <div class="relative flex-grow">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    </span>
+                                    <input type="text" id="searchInput" oninput="renderGrid()" placeholder="Поиск..." class="pl-10 pr-4 py-2.5 w-full border border-slate-200 bg-slate-50 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                                </div>
+                                <select id="sortSelect" onchange="renderGrid()" class="py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none cursor-pointer">
+                                    <option value="lastUpdated">🕒 По времени изменения</option>
+                                    <option value="dateDesc">📅 По дате вступления (новые)</option>
+                                    <option value="dateAsc">📅 По дате вступления (старые)</option>
+                                </select>
+                            </div>
+
+                            <!-- Filters -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                 <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Фильтр по документу</div>
+                                    <div class="flex gap-2 overflow-x-auto custom-scroll pb-1" id="docFilterContainer"></div>
+                                 </div>
+                                 <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Фильтр по типу</div>
+                                    <div class="flex gap-2 flex-wrap" id="typeFilterContainer"></div>
+                                 </div>
+                                 <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Теги</div>
+                                    <div class="flex gap-2 flex-wrap" id="targetContainer"></div>
+                                 </div>
+                            </div>
+                            
+                            <!-- Active Filters Bar -->
+                            <div id="activeFiltersBar" class="hidden flex items-center justify-between bg-brand-50 border border-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm">
+                                <span class="font-medium">Фильтры активны</span>
+                                <button onclick="resetAllFilters()" class="text-xs font-bold uppercase hover:text-brand-900 underline">Сбросить</button>
+                            </div>
+                        </div>
+
+                        <!-- Right: Bar Chart -->
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 text-center">Распределение (в текущей выборке)</h4>
+                            <div class="flex-grow relative" style="min-height: 300px;">
+                                <canvas id="typeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIST HEADER -->
+               <div class="flex items-center justify-between mt-2 mb-1">
+            <div class="text-sm text-slate-500 font-medium">Список записей (<span id="filteredCount">0</span>)</div>
+            <div class="flex gap-2">
+                <button onclick="exportToExcelNPA()" class="text-xs text-emerald-600 font-bold hover:underline flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Экспорт Excel
+                </button>
+                <button onclick="toggleSelectAll()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
             </div>
         </div>
-    </header>
-
-    <!-- Вкладка 1: Реестр НПА -->
-    <main class="tab-content active" id="npasTab">
-        <div class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-24">
-            <!-- DASHBOARD -->
-            <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <!-- Total Card -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="resetAllFilters()">
-                    <div class="absolute right-0 top-0 w-24 h-24 bg-brand-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-brand-100"></div>
-                    <div class="relative z-10">
-                        <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Найдено в базе</h3>
-                        <div class="text-4xl font-extrabold text-slate-900" id="statTotal">0</div>
-                        <div class="mt-4 flex items-center text-xs text-brand-600 font-medium">
-                            <span class="w-2 h-2 rounded-full bg-brand-500 mr-2"></span> Записи отображены
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Docs Structure (Clickable) -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm md:col-span-3 flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-4">
-                         <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider">Структура текущей выборки</h3>
-                         <span class="text-[10px] text-slate-400">Нажмите для фильтрации</span>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        
-                        <!-- 237-ФЗ -->
-                        <div onclick="setDocFilter('237-ФЗ')" class="p-3 rounded-xl bg-indigo-50 border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition relative overflow-hidden group">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-indigo-900 text-xs">237-ФЗ</span>
-                                <span class="bg-white/80 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countFZ">0</span>
-                            </div>
-                            <div class="w-full bg-indigo-200 rounded-full h-1 overflow-hidden">
-                                <div id="barFZ" class="bg-indigo-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Приказ -->
-                        <div onclick="setDocFilter('Приказ № П/0336')" class="p-3 rounded-xl bg-sky-50 border border-sky-100 cursor-pointer hover:bg-sky-100 transition relative overflow-hidden group">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-sky-900 text-xs">Приказ П/0336</span>
-                                <span class="bg-white/80 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countOrder">0</span>
-                            </div>
-                            <div class="w-full bg-sky-200 rounded-full h-1 overflow-hidden">
-                                <div id="barOrder" class="bg-sky-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <!-- 378.2 НК РФ -->
-                        <div onclick="setDocFilter('378.2 НК РФ')" class="p-3 rounded-xl bg-amber-50 border border-amber-100 cursor-pointer hover:bg-amber-100 transition relative overflow-hidden group">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-amber-900 text-xs">378.2 НК РФ</span>
-                                <span class="bg-white/80 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countNK">0</span>
-                            </div>
-                            <div class="w-full bg-amber-200 rounded-full h-1 overflow-hidden">
-                                <div id="barNK" class="bg-amber-600 h-1 rounded-full progress-bar-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Main Controls & Chart -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left: Controls -->
-                <div class="lg:col-span-2 space-y-4">
-                     <!-- Search & Sort -->
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4">
-                        <div class="relative flex-grow">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            </span>
-                            <input type="text" id="searchInput" oninput="renderGrid()" placeholder="Поиск..." class="pl-10 pr-4 py-2.5 w-full border border-slate-200 bg-slate-50 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none">
-                        </div>
-                        <select id="sortSelect" onchange="renderGrid()" class="py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none cursor-pointer">
-                            <option value="lastUpdated">🕒 По времени изменения</option>
-                            <option value="dateDesc">📅 По дате вступления (новые)</option>
-                            <option value="dateAsc">📅 По дате вступления (старые)</option>
-                        </select>
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                         <div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Фильтр по документу</div>
-                            <div class="flex gap-2 overflow-x-auto custom-scroll pb-1" id="docFilterContainer"></div>
-                         </div>
-                         <div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Фильтр по типу</div>
-                            <div class="flex gap-2 flex-wrap" id="typeFilterContainer"></div>
-                         </div>
-                         <div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Теги</div>
-                            <div class="flex gap-2 flex-wrap" id="targetContainer"></div>
-                         </div>
-                    </div>
                     
-                    <!-- Active Filters Bar -->
-                    <div id="activeFiltersBar" class="hidden flex items-center justify-between bg-brand-50 border border-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm">
-                        <span class="font-medium">Фильтры активны</span>
-                        <button onclick="resetAllFilters()" class="text-xs font-bold uppercase hover:text-brand-900 underline">Сбросить</button>
-                    </div>
-                </div>
-
-                <!-- Right: Bar Chart -->
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 text-center">Распределение (в текущей выборке)</h4>
-                    <div class="flex-grow relative" style="min-height: 300px;">
-                        <canvas id="typeChart"></canvas>
-                    </div>
+                    <!-- GRID -->
+                    <div id="cardsGrid" class="grid grid-cols-1 gap-4"></div>
                 </div>
             </div>
 
-            <!-- LIST HEADER -->
-       <div class="flex items-center justify-between mt-2 mb-1">
-    <div class="text-sm text-slate-500 font-medium">Список записей (<span id="filteredCount">0</span>)</div>
-    <div class="flex gap-2">
-        <button onclick="exportToExcelNPA()" class="text-xs text-emerald-600 font-bold hover:underline flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Экспорт Excel
-        </button>
-        <button onclick="toggleSelectAll()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
-    </div>
-</div>
-            
-            <!-- GRID -->
-            <div id="cardsGrid" class="grid grid-cols-1 gap-4"></div>
-        </div>
-    </main>
+            <!-- Вкладка 2: Дашборды Superset -->
+            <div class="tab-content" id="dashboardsTab">
+                <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-24">
+                    <!-- Dashboard Summary Cards -->
+                    <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <!-- Total Dashboards -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="resetAllDashboardsFilters()">
+                            <div class="absolute right-0 top-0 w-24 h-24 bg-superset-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-superset-100"></div>
+                            <div class="relative z-10">
+                                <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Всего дашбордов</h3>
+                                <div class="text-4xl font-extrabold text-slate-900" id="statTotalDashboards">0</div>
+                                <div class="mt-4 flex items-center text-xs text-superset-600 font-medium">
+                                    <span class="w-2 h-2 rounded-full bg-superset-500 mr-2"></span> В системе Apache Superset
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- Вкладка 2: Дашборды Superset -->
-    <main class="tab-content" id="dashboardsTab">
-        <div class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-24">
-            <!-- Dashboard Summary Cards -->
-            <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <!-- Total Dashboards -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="resetAllDashboardsFilters()">
-                    <div class="absolute right-0 top-0 w-24 h-24 bg-superset-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-superset-100"></div>
-                    <div class="relative z-10">
-                        <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Всего дашбордов</h3>
-                        <div class="text-4xl font-extrabold text-slate-900" id="statTotalDashboards">0</div>
-                        <div class="mt-4 flex items-center text-xs text-superset-600 font-medium">
-                            <span class="w-2 h-2 rounded-full bg-superset-500 mr-2"></span> В системе Apache Superset
+                        <!-- Active Dashboards -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="setStatusFilterDashboards('active')">
+                            <div class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-emerald-100"></div>
+                            <div class="relative z-10">
+                                <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Активные</h3>
+                                <div class="text-4xl font-extrabold text-emerald-600" id="statActiveDashboards">0</div>
+                                <div class="mt-4 flex items-center text-xs text-emerald-600 font-medium">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> Используются в работе
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- By Type Card -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group md:col-span-2">
+                            <div class="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-amber-100"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider">По типам анализа</h3>
+                                    <span class="text-[10px] text-slate-400">Нажмите для фильтрации</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div onclick="setTypeFilterDashboards('analytical')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100 transition">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold text-slate-700 text-xs">Аналитика</span>
+                                            <span class="bg-white text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countAnalytical">0</span>
+                                        </div>
+                                    </div>
+                                    <div onclick="setTypeFilterDashboards('monitoring')" class="p-2.5 rounded-xl bg-blue-50 border border-blue-100 cursor-pointer hover:bg-blue-100 transition">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold text-blue-700 text-xs">Мониторинг</span>
+                                            <span class="bg-white text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countMonitoring">0</span>
+                                        </div>
+                                    </div>
+                                    <div onclick="setTypeFilterDashboards('operational')" class="p-2.5 rounded-xl bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100 transition">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold text-purple-700 text-xs">Оперативные</span>
+                                            <span class="bg-white text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countOperational">0</span>
+                                        </div>
+                                    </div>
+                                    <div onclick="setTypeFilterDashboards('reporting')" class="p-2.5 rounded-xl bg-rose-50 border border-rose-100 cursor-pointer hover:bg-rose-100 transition">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold text-rose-700 text-xs">Отчетность</span>
+                                            <span class="bg-white text-rose-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countReporting">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Controls & Stats -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left: Controls -->
+                        <div class="lg:col-span-2 space-y-4">
+                            <!-- Search & Sort -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4">
+                                <div class="relative flex-grow">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </span>
+                                    <input type="text" id="searchInputDashboards" oninput="renderDashboardsGrid()" placeholder="Поиск по названию, описанию..." class="pl-10 pr-4 py-2.5 w-full border border-slate-200 bg-slate-50 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                                </div>
+                                <select id="sortSelectDashboards" onchange="renderDashboardsGrid()" class="py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none cursor-pointer">
+                                    <option value="createdDesc">📅 По дате создания (новые)</option>
+                                    <option value="createdAsc">📅 По дате создания (старые)</option>
+                                    <option value="nameAsc">🔤 По названию (А-Я)</option>
+                                    <option value="nameDesc">🔤 По названию (Я-А)</option>
+                                </select>
+                            </div>
+
+                            <!-- Filters -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Статус</div>
+                                    <div class="flex gap-2 overflow-x-auto custom-scroll pb-1" id="statusFilterContainerDashboards"></div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Тип анализа</div>
+                                    <div class="flex gap-2 flex-wrap" id="typeFilterContainerDashboards"></div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Теги</div>
+                                    <div class="flex gap-2 flex-wrap" id="tagsContainerDashboards"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Active Filters Bar -->
+                            <div id="activeFiltersBarDashboards" class="hidden flex items-center justify-between bg-brand-50 border border-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm">
+                                <span class="font-medium">Фильтры активны</span>
+                                <button onclick="resetAllDashboardsFilters()" class="text-xs font-bold uppercase hover:text-brand-900 underline">Сбросить</button>
+                            </div>
+                        </div>
+
+                        <!-- Right: Chart -->
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 text-center">Распределение по типу анализа</h4>
+                            <div class="chart-container">
+                                <canvas id="typeChartDashboards"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Active Dashboards -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group" onclick="setStatusFilterDashboards('active')">
-                    <div class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-emerald-100"></div>
-                    <div class="relative z-10">
-                        <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Активные</h3>
-                        <div class="text-4xl font-extrabold text-emerald-600" id="statActiveDashboards">0</div>
-                        <div class="mt-4 flex items-center text-xs text-emerald-600 font-medium">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> Используются в работе
-                        </div>
-                    </div>
-                </div>
-
-                <!-- By Type Card -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group md:col-span-2">
-                    <div class="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-amber-100"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider">По типам анализа</h3>
-                            <span class="text-[10px] text-slate-400">Нажмите для фильтрации</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div onclick="setTypeFilterDashboards('analytical')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100 transition">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold text-slate-700 text-xs">Аналитика</span>
-                                    <span class="bg-white text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countAnalytical">0</span>
-                                </div>
-                            </div>
-                            <div onclick="setTypeFilterDashboards('monitoring')" class="p-2.5 rounded-xl bg-blue-50 border border-blue-100 cursor-pointer hover:bg-blue-100 transition">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold text-blue-700 text-xs">Мониторинг</span>
-                                    <span class="bg-white text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countMonitoring">0</span>
-                                </div>
-                            </div>
-                            <div onclick="setTypeFilterDashboards('operational')" class="p-2.5 rounded-xl bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100 transition">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold text-purple-700 text-xs">Оперативные</span>
-                                    <span class="bg-white text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countOperational">0</span>
-                                </div>
-                            </div>
-                            <div onclick="setTypeFilterDashboards('reporting')" class="p-2.5 rounded-xl bg-rose-50 border border-rose-100 cursor-pointer hover:bg-rose-100 transition">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold text-rose-700 text-xs">Отчетность</span>
-                                    <span class="bg-white text-rose-700 text-[10px] font-bold px-1.5 py-0.5 rounded" id="countReporting">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Controls & Stats -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left: Controls -->
-                <div class="lg:col-span-2 space-y-4">
-                    <!-- Search & Sort -->
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4">
-                        <div class="relative flex-grow">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <!-- List Header -->
+                    <div class="flex items-center justify-between mt-2 mb-1">
+                        <div class="text-sm text-slate-500 font-medium">Дашборды (<span id="filteredCountDashboards">0</span>)</div>
+                        <div class="flex gap-2">
+                            <button onclick="exportToExcelDashboards()" class="text-xs text-emerald-600 font-bold hover:underline flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                            </span>
-                            <input type="text" id="searchInputDashboards" oninput="renderDashboardsGrid()" placeholder="Поиск по названию, описанию..." class="pl-10 pr-4 py-2.5 w-full border border-slate-200 bg-slate-50 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none">
-                        </div>
-                        <select id="sortSelectDashboards" onchange="renderDashboardsGrid()" class="py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none cursor-pointer">
-                            <option value="createdDesc">📅 По дате создания (новые)</option>
-                            <option value="createdAsc">📅 По дате создания (старые)</option>
-                            <option value="nameAsc">🔤 По названию (А-Я)</option>
-                            <option value="nameDesc">🔤 По названию (Я-А)</option>
-                        </select>
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                        <div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Статус</div>
-                            <div class="flex gap-2 overflow-x-auto custom-scroll pb-1" id="statusFilterContainerDashboards"></div>
-                        </div>
-                        <div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Тип анализа</div>
-                            <div class="flex gap-2 flex-wrap" id="typeFilterContainerDashboards"></div>
-                        </div>
-                        <div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">Теги</div>
-                            <div class="flex gap-2 flex-wrap" id="tagsContainerDashboards"></div>
+                                Экспорт Excel
+                            </button>
+                            <button onclick="toggleSelectAllDashboards()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
                         </div>
                     </div>
                     
-                    <!-- Active Filters Bar -->
-                    <div id="activeFiltersBarDashboards" class="hidden flex items-center justify-between bg-brand-50 border border-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm">
-                        <span class="font-medium">Фильтры активны</span>
-                        <button onclick="resetAllDashboardsFilters()" class="text-xs font-bold uppercase hover:text-brand-900 underline">Сбросить</button>
-                    </div>
-                </div>
-
-                <!-- Right: Chart -->
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 text-center">Распределение по типу анализа</h4>
-                    <div class="chart-container">
-                        <canvas id="typeChartDashboards"></canvas>
-                    </div>
+                    <!-- DASHBOARDS GRID -->
+                    <div id="cardsGridDashboards" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
                 </div>
             </div>
 
-            <!-- List Header -->
-            <div class="flex items-center justify-between mt-2 mb-1">
-                <div class="text-sm text-slate-500 font-medium">Дашборды (<span id="filteredCountDashboards">0</span>)</div>
-                <div class="flex gap-2">
-                    <button onclick="exportToExcelDashboards()" class="text-xs text-emerald-600 font-bold hover:underline flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Экспорт Excel
-                    </button>
-                    <button onclick="toggleSelectAllDashboards()" class="text-xs text-brand-600 font-bold hover:underline ml-4">Выбрать показанные</button>
-                </div>
+            <!-- Вкладка 3: Калькулятор Эффективности -->
+            <div class="tab-content calculator-tab" id="calculatorTab">
+                <div id="calculatorRoot"></div>
             </div>
-            
-            <!-- DASHBOARDS GRID -->
-            <div id="cardsGridDashboards" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
-        </div>
-    </main>
+        </main>
+    </div>
 
-    <!-- Вкладка 3: Калькулятор Эффективности -->
-    <main class="tab-content calculator-tab" id="calculatorTab">
-        <div id="calculatorRoot"></div>
-    </main>
-
-    <!-- Footer - Упрощенный -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 mt-auto py-4">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-sm text-slate-400">&copy; 2026 Отдел ГКО</p>
