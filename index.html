@@ -329,6 +329,35 @@
                 max-height: 300px;
             }
         }
+      .capitalization-section {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.book-subsubsection {
+    padding: 0.75rem 1.5rem 0.75rem 3.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+    background: #f8fafc;
+}
+
+.book-subsubsection:hover {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.book-subsubsection.active {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-left: 3px solid #3b82f6;
+    font-weight: 600;
+}
     </style>
 </head>
 <body class="text-slate-800 antialiased flex flex-col min-h-screen">
@@ -392,30 +421,46 @@
     <div class="book-layout">
         <!-- Боковая панель с содержанием -->
 <aside class="book-sidebar">
+    <!-- Главный раздел "Отдел базы ГКО" (всегда сворачивается) -->
     <div class="book-section main" onclick="toggleAllSections()">
         <div class="section-icon">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
         </div>
-        <span>Отдел ГКО: База знаний</span>
+        <span>Отдел базы ГКО</span>
         <div id="collapseIcon" class="ml-auto transition-transform">▼</div>
     </div>
     
+    <!-- Контейнер для всех подразделов -->
     <div id="subsectionsContainer">
-        <div class="book-subsection active" onclick="switchTab('npas')" id="navNPA">
+        <!-- Пункт "рЕЕСТРЫ НПА" -->
+        <div class="book-subsection" onclick="switchTab('npas')" id="navNPA">
             <div class="section-icon">📚</div>
-            <span>Реестр НПА</span>
+            <span>рЕЕСТРЫ НПА</span>
         </div>
         
+        <!-- Пункт "Дашборды superset" -->
         <div class="book-subsection" onclick="switchTab('dashboards')" id="navDashboards">
             <div class="section-icon">📊</div>
-            <span>Дашборды Superset</span>
+            <span>Дашборды superset</span>
         </div>
         
-        <div class="book-subsection" onclick="switchTab('calculator')" id="navCalculator">
-            <div class="section-icon">🧮</div>
-            <span>Калькулятор Эффективности</span>
+        <!-- Раздел "Капитализация" со своим сворачиванием -->
+        <div class="capitalization-section">
+            <div class="book-subsection" onclick="toggleCapitalization()" id="navCapitalizationToggle">
+                <div class="section-icon">💰</div>
+                <span>Капитализация</span>
+                <div class="ml-auto transition-transform" id="capitalizationIcon">▼</div>
+            </div>
+            
+            <!-- Подпункты капитализации (изначально скрыты) -->
+            <div id="capitalizationSubsections" style="display: none;">
+                <div class="book-subsubsection" onclick="switchTab('calculator')" id="navCalculator">
+                    <div class="section-icon">🧮</div>
+                    <span>Калькулятор эффективности</span>
+                </div>
+            </div>
         </div>
     </div>
 </aside>
@@ -2092,22 +2137,20 @@ function exportJson() {
         };
         input.click();
     }
-
 function switchTab(tabName) {
-    // Снимаем класс active со всех элементов навигации
-    document.querySelectorAll('.book-subsection').forEach(el => {
+    // Убираем active со всех элементов навигации
+    document.querySelectorAll('.book-subsection, .book-subsubsection').forEach(el => {
         el.classList.remove('active');
     });
     
-    // Добавляем класс active только к нажатому элементу
-    // Маппинг имен вкладок на ID элементов навигации
+    // Добавляем active только к нажатому элементу
     const navIdMap = {
         'npas': 'navNPA',
         'dashboards': 'navDashboards', 
         'calculator': 'navCalculator'
     };
     
-    const navId = navIdMap[tabName] || `nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`;
+    const navId = navIdMap[tabName];
     const activeNavItem = document.getElementById(navId);
     if (activeNavItem) {
         activeNavItem.classList.add('active');
@@ -2126,50 +2169,34 @@ function switchTab(tabName) {
         document.getElementById('addButtonText').textContent = 'Добавить запись';
         document.getElementById('resetBtnText').textContent = 'Сброс НПА';
         currentTab = 'npas';
-        // Скрываем тулбар дашбордов, показываем тулбар НПА
         document.getElementById('bulkToolbarDashboards').classList.add('hidden');
         if (selectedIds.size > 0) {
             document.getElementById('bulkToolbar').classList.remove('hidden');
         }
-        renderGrid(); // Обновляем грид НПА
+        renderGrid();
     } else if (tabName === 'dashboards') {
         document.getElementById('npaImportButtons').classList.add('hidden');
         document.getElementById('dashboardsImportButtons').classList.remove('hidden');
         document.getElementById('addButtonText').textContent = 'Новый дашборд';
         document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
         currentTab = 'dashboards';
-        // Скрываем тулбар НПА, показываем тулбар дашбордов
         document.getElementById('bulkToolbar').classList.add('hidden');
         if (selectedIdsDashboards.size > 0) {
             document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
         }
         
-        // ГАРАНТИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ ВКЛАДКИ ДАШБОРДОВ
-        // 1. Сначала убедимся, что данные загружены
         if (dashboardsData.length === 0) {
-            loadDashboardsData(); // Эта функция должна загрузить данные
+            loadDashboardsData();
         }
         
-        // 2. Ждем немного, чтобы данные успели загрузиться, затем рендерим
         setTimeout(() => {
-            // Обновляем статистику
             updateDashboardStatsDashboards();
-            
-            // Обновляем фильтры
             renderStatusFiltersDashboards();
             renderTypeFiltersDashboards();
             renderTagsDashboards();
-            
-            // Обновляем график
             updateChartDashboards(dashboardsData);
-            
-            // И главное - рендерим грид карточек
             renderDashboardsGrid();
-            
-            // Обновляем тулбар массового выбора
             updateBulkToolbarDashboards();
-            
-            console.log('Вкладка дашбордов инициализирована, данных:', dashboardsData.length);
         }, 50);
     } else if (tabName === 'calculator') {
         document.getElementById('npaImportButtons').classList.add('hidden');
@@ -2178,14 +2205,13 @@ function switchTab(tabName) {
         document.getElementById('resetBtnText').textContent = 'Сброс калькулятора';
         currentTab = 'calculator';
         
-        // Скрываем все тулбары
         document.getElementById('bulkToolbar').classList.add('hidden');
         document.getElementById('bulkToolbarDashboards').classList.add('hidden');
         
-        // Инициализируем калькулятор
         initCalculator();
     }
 }
+
     
     function hardResetCurrent() {
         if (currentTab === 'npas') {
@@ -3590,54 +3616,144 @@ function toggleAllSections() {
     const icon = document.getElementById('collapseIcon');
     
     if (areSubsectionsCollapsed) {
-        // Разворачиваем
+        // Разворачиваем все
         container.style.display = 'block';
         icon.style.transform = 'rotate(0deg)';
         icon.textContent = '▼';
         areSubsectionsCollapsed = false;
+        
+        // Если Капитализация была развернута, восстанавливаем её состояние
+        if (isCapitalizationExpanded) {
+            const capContainer = document.getElementById('capitalizationSubsections');
+            const capIcon = document.getElementById('capitalizationIcon');
+            if (capContainer && capIcon) {
+                capContainer.style.display = 'block';
+                capIcon.style.transform = 'rotate(180deg)';
+                capIcon.textContent = '▲';
+            }
+        }
     } else {
-        // Сворачиваем
+        // Сворачиваем все
         container.style.display = 'none';
         icon.style.transform = 'rotate(-90deg)';
         icon.textContent = '▶';
         areSubsectionsCollapsed = true;
     }
 }
+let isCapitalizationExpanded = false;
+
+function toggleCapitalization() {
+    const container = document.getElementById('capitalizationSubsections');
+    const icon = document.getElementById('capitalizationIcon');
+    
+    if (isCapitalizationExpanded) {
+        // Сворачиваем
+        container.style.display = 'none';
+        icon.style.transform = 'rotate(0deg)';
+        icon.textContent = '▼';
+        isCapitalizationExpanded = false;
+    } else {
+        // Разворачиваем
+        container.style.display = 'block';
+        icon.style.transform = 'rotate(180deg)';
+        icon.textContent = '▲';
+        isCapitalizationExpanded = true;
+    }
+}
 
 // Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    // Устанавливаем начальное состояние (развернуто)
+window.addEventListener('DOMContentLoaded', function() {
+    console.log('Инициализация приложения...');
+    
+    // 1. Инициализация навигационной панели
     const container = document.getElementById('subsectionsContainer');
     const icon = document.getElementById('collapseIcon');
+    const capitalizationContainer = document.getElementById('capitalizationSubsections');
+    const capitalizationIcon = document.getElementById('capitalizationIcon');
     
     if (container && icon) {
         container.style.display = 'block';
         icon.textContent = '▼';
         areSubsectionsCollapsed = false;
     }
-});
-    // ============== ИНИЦИАЛИЗАЦИЯ ==============
-window.addEventListener('DOMContentLoaded', function() {
-    console.log('Инициализация приложения...');
     
-    // 1. Загружаем локальные данные для НПА и дашбордов
+    if (capitalizationContainer && capitalizationIcon) {
+        // По умолчанию капитализация свернута
+        capitalizationContainer.style.display = 'none';
+        capitalizationIcon.textContent = '▼';
+        isCapitalizationExpanded = false;
+    }
+    
+    // 2. Проверить, если в URL есть хэш для калькулятора
+    const urlHash = window.location.hash;
+    if (urlHash === '#calculator' || urlHash === '#capitalization') {
+        // Развернуть раздел Капитализация при открытии калькулятора
+        if (capitalizationContainer && capitalizationIcon) {
+            capitalizationContainer.style.display = 'block';
+            capitalizationIcon.style.transform = 'rotate(180deg)';
+            capitalizationIcon.textContent = '▲';
+            isCapitalizationExpanded = true;
+        }
+        
+        // Активировать калькулятор
+        const calculatorNav = document.getElementById('navCalculator');
+        if (calculatorNav) {
+            calculatorNav.classList.add('active');
+        }
+    } else {
+        // По умолчанию активен Реестр НПА
+        const npaNav = document.getElementById('navNPA');
+        if (npaNav) {
+            npaNav.classList.add('active');
+        }
+    }
+    
+    // 3. Загружаем локальные данные для НПА и дашбордов
     loadData();
     loadDashboardsData();
     
-    // 2. Пытаемся загрузить из GitHub (включая данные калькулятора)
+    // 4. Пытаемся загрузить из GitHub (включая данные калькулятора)
     loadFromGitHub().then(() => {
-        console.log('✅ Все данные загружены');
+        console.log('✅ Все данные загружены из GitHub');
         
-        // 3. Если мы уже на вкладке калькулятора - инициализируем его
-        // (данные уже будут в localStorage от loadFromGitHub)
-        if (window.location.hash === '#calculator') {
+        // 5. Автоматически переключаемся на калькулятор если в URL есть хэш
+        if (urlHash === '#calculator') {
             setTimeout(() => {
                 switchTab('calculator');
             }, 100);
         }
     }).catch((error) => {
         console.log('⚠️ GitHub недоступен:', error.message);
+        console.log('Используются локальные данные из localStorage');
+        
         // Даже если GitHub недоступен, калькулятор загрузит данные из localStorage
+        // Автоматически переключаемся на калькулятор если в URL есть хэш
+        if (urlHash === '#calculator') {
+            setTimeout(() => {
+                switchTab('calculator');
+            }, 100);
+        }
+    });
+    
+    // 6. Инициализация обработчиков для навигации по хэшу
+    window.addEventListener('hashchange', function() {
+        const hash = window.location.hash;
+        console.log('Hash changed to:', hash);
+        
+        if (hash === '#calculator') {
+            // Развернуть раздел Капитализация
+            if (capitalizationContainer && capitalizationIcon && !isCapitalizationExpanded) {
+                toggleCapitalization();
+            }
+            // Переключить на калькулятор
+            setTimeout(() => {
+                switchTab('calculator');
+            }, 50);
+        } else if (hash === '#npas') {
+            switchTab('npas');
+        } else if (hash === '#dashboards') {
+            switchTab('dashboards');
+        }
     });
 });
 </script>
