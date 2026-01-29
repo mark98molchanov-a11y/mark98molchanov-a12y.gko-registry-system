@@ -2164,118 +2164,6 @@ async function saveDioToGitHub() {
         alert(`Ошибка: ${error.message}`);
     }
 }
-function switchTab(tabName) {
-    // Убрать активность со всех пунктов навигации
-    document.querySelectorAll('.book-section.main, .book-subsection, .book-subsubsection').forEach(el => {
-        el.classList.remove('active');
-    });
-    
-    const navIdMap = {
-        'npas': 'navNPA',
-        'dashboards': 'navDashboards', 
-        'calculator': 'navCalculator',
-        'dio_tree': 'navDioTree', // ДОБАВИТЬ ЭТУ СТРОКУ
-        'dio': null
-    };
-    
-    const navId = navIdMap[tabName];
-    if (navId) {
-        const activeNavItem = document.getElementById(navId);
-        if (activeNavItem) {
-            activeNavItem.classList.add('active');
-        }
-    }
-    
-    // Для главной секции ДИО
-    if (tabName === 'dio' || tabName === 'dio_tree') { // ОБНОВИТЬ ЭТУ СТРОКУ
-        const dioSection = Array.from(document.querySelectorAll('.book-section.main'))
-            .find(el => el.textContent.includes('База ДИО'));
-        if (dioSection) {
-            dioSection.classList.add('active');
-        }
-    }
-    
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.getElementById(`${tabName}Tab`).classList.add('active');
-    
-    if (tabName === 'dio') {
-        document.getElementById('npaImportButtons').classList.add('hidden');
-        document.getElementById('dashboardsImportButtons').classList.add('hidden');
-        document.getElementById('addButtonText').textContent = 'Добавить в ДИО';
-        document.getElementById('resetBtnText').textContent = 'Сброс ДИО';
-        currentTab = 'dio';
-        document.getElementById('bulkToolbar').classList.add('hidden');
-        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-    } else if (tabName === 'npas') {
-        document.getElementById('npaImportButtons').classList.remove('hidden');
-        document.getElementById('dashboardsImportButtons').classList.add('hidden');
-        document.getElementById('addButtonText').textContent = 'Добавить запись';
-        document.getElementById('resetBtnText').textContent = 'Сброс НПА';
-        currentTab = 'npas';
-        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-        if (selectedIds.size > 0) {
-            document.getElementById('bulkToolbar').classList.remove('hidden');
-        }
-        renderGrid();
-    } else if (tabName === 'dashboards') {
-        document.getElementById('npaImportButtons').classList.add('hidden');
-        document.getElementById('dashboardsImportButtons').classList.remove('hidden');
-        document.getElementById('addButtonText').textContent = 'Новый дашборд';
-        document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
-        currentTab = 'dashboards';
-        document.getElementById('bulkToolbar').classList.add('hidden');
-        if (selectedIdsDashboards.size > 0) {
-            document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
-        }
-        
-        if (dashboardsData.length === 0) {
-            loadDashboardsData();
-        }
-        
-        setTimeout(() => {
-            updateDashboardStatsDashboards();
-            renderStatusFiltersDashboards();
-            renderTypeFiltersDashboards();
-            renderTagsDashboards();
-            updateChartDashboards(dashboardsData);
-            renderDashboardsGrid();
-            updateBulkToolbarDashboards();
-        }, 50);
-    } else if (tabName === 'calculator') {
-        document.getElementById('npaImportButtons').classList.add('hidden');
-        document.getElementById('dashboardsImportButtons').classList.add('hidden');
-        document.getElementById('addButtonText').textContent = 'Новый расчет';
-        document.getElementById('resetBtnText').textContent = 'Сброс калькулятора';
-        currentTab = 'calculator';
-        
-        document.getElementById('bulkToolbar').classList.add('hidden');
-        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-        
-        initCalculator();
-    } else if (tabName === 'dio_tree') { // ДОБАВИТЬ ЭТОТ БЛОК
-        document.getElementById('npaImportButtons').classList.add('hidden');
-        document.getElementById('dashboardsImportButtons').classList.add('hidden');
-        document.getElementById('addButtonText').textContent = 'Добавить узел';
-        document.getElementById('resetBtnText').textContent = 'Сброс дерева ДИО';
-        currentTab = 'dio_tree';
-        
-        document.getElementById('bulkToolbar').classList.add('hidden');
-        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
-        
-        // Загружаем данные дерева ДИО при первом открытии
-        if (!window.dioTreeData) {
-            loadDioData();
-        }
-        
-        // Обновляем iframe
-        setTimeout(() => {
-            updateDioTreeFrame();
-        }, 500);
-    }
-}
-
     
 function hardResetCurrent() {
     if (currentTab === 'npas') {
@@ -3625,9 +3513,119 @@ function exportToExcelDashboards() {
         // Реализация импорта Excel для НПА
         alert("Импорт Excel для НПА. Реализуйте эту функцию при необходимости.");
     }
-let areSubsectionsCollapsed = false;
+window.switchTab = function(tabName) {
+    // Убрать активность со всех пунктов навигации
+    document.querySelectorAll('.book-section.main, .book-subsection, .book-subsubsection').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    const navIdMap = {
+        'npas': 'navNPA',
+        'dashboards': 'navDashboards', 
+        'calculator': 'navCalculator',
+        'dio_tree': 'navDioTree',
+        'dio': null
+    };
+    
+    const navId = navIdMap[tabName];
+    if (navId) {
+        const activeNavItem = document.getElementById(navId);
+        if (activeNavItem) {
+            activeNavItem.classList.add('active');
+        }
+    }
+    
+    // Для главной секции ДИО
+    if (tabName === 'dio' || tabName === 'dio_tree') {
+        const dioSection = Array.from(document.querySelectorAll('.book-section.main'))
+            .find(el => el.textContent.includes('База ДИО'));
+        if (dioSection) {
+            dioSection.classList.add('active');
+        }
+    }
+    
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(`${tabName}Tab`).classList.add('active');
+    
+    if (tabName === 'dio') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Добавить в ДИО';
+        document.getElementById('resetBtnText').textContent = 'Сброс ДИО';
+        currentTab = 'dio';
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+    } else if (tabName === 'npas') {
+        document.getElementById('npaImportButtons').classList.remove('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Добавить запись';
+        document.getElementById('resetBtnText').textContent = 'Сброс НПА';
+        currentTab = 'npas';
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        if (selectedIds.size > 0) {
+            document.getElementById('bulkToolbar').classList.remove('hidden');
+        }
+        renderGrid();
+    } else if (tabName === 'dashboards') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.remove('hidden');
+        document.getElementById('addButtonText').textContent = 'Новый дашборд';
+        document.getElementById('resetBtnText').textContent = 'Сброс дашбордов';
+        currentTab = 'dashboards';
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        if (selectedIdsDashboards.size > 0) {
+            document.getElementById('bulkToolbarDashboards').classList.remove('hidden');
+        }
+        
+        if (dashboardsData.length === 0) {
+            loadDashboardsData();
+        }
+        
+        setTimeout(() => {
+            updateDashboardStatsDashboards();
+            renderStatusFiltersDashboards();
+            renderTypeFiltersDashboards();
+            renderTagsDashboards();
+            updateChartDashboards(dashboardsData);
+            renderDashboardsGrid();
+            updateBulkToolbarDashboards();
+        }, 50);
+    } else if (tabName === 'calculator') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Новый расчет';
+        document.getElementById('resetBtnText').textContent = 'Сброс калькулятора';
+        currentTab = 'calculator';
+        
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        
+        initCalculator();
+    } else if (tabName === 'dio_tree') {
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Добавить узел';
+        document.getElementById('resetBtnText').textContent = 'Сброс дерева ДИО';
+        currentTab = 'dio_tree';
+        
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        
+        // Загружаем данные дерева ДИО при первом открытии
+        if (!window.dioTreeData) {
+            loadDioData();
+        }
+        
+        // Обновляем iframe
+        setTimeout(() => {
+            updateDioTreeFrame();
+        }, 500);
+    }
+};
 
-function toggleAllSections() {
+window.toggleAllSections = function() {
     const container = document.getElementById('subsectionsContainer');
     const icon = document.getElementById('collapseIcon');
     
@@ -3652,10 +3650,9 @@ function toggleAllSections() {
         icon.textContent = '▶';
         areSubsectionsCollapsed = true;
     }
-}
-let isCapitalizationExpanded = false;
+};
 
-function toggleCapitalization() {
+window.toggleCapitalization = function() {
     const container = document.getElementById('capitalizationSubsections');
     const icon = document.getElementById('capitalizationIcon');
     
@@ -3670,7 +3667,14 @@ function toggleCapitalization() {
         icon.textContent = '▲';
         isCapitalizationExpanded = true;
     }
-}
+};
+
+window.toggleCardText = function(id) {
+    const element = document.getElementById(`legal-${id}`);
+    if (element) {
+        element.classList.toggle('hidden');
+    }
+};
 
 window.addEventListener('DOMContentLoaded', function() {
     console.log('Инициализация приложения...');
