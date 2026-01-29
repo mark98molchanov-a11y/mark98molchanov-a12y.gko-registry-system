@@ -1317,7 +1317,8 @@ function EfficiencyCalculator() {
 
                         <div className="w-px h-6 bg-slate-300 mx-2 hidden xl:block"></div>
 
-<button onClick={resetCurrentCalcPeriod} cRotateCcw size={16} />
+<button onClick={resetCurrentCalcPeriod} className="px-3 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">
+    <IconRotateCcw size={16} />
 </button>
                     </div>
                 </header>
@@ -1676,8 +1677,7 @@ function initCalculator() {
     }
 }
 </script>
-lassName="px-3 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">
-    <Icon
+
 <script>
     window.GITHUB_RAW_URL = 'https://raw.githubusercontent.com/mark98molchanov-a11y/mark98molchanov-a12y.gko-registry-system/main/';
     
@@ -3529,3 +3529,180 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+Вот мой код самого дерева dio.three.html
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Интерактивное дерево - Apache Superset Embed</title>
+    <meta http-equiv="X-Frame-Options" content="allow-from *">
+<meta http-equiv="Content-Security-Policy" content="
+    default-src 'self' data: blob:;
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob:;
+    connect-src 'self' https://raw.githubusercontent.com https://api.github.com https://mark98molchanov-ally.github.io;
+    font-src 'self';
+">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    
+    <style>
+        #githubLoadBtn {
+            background: linear-gradient(145deg, #24292e, #0366d6) !important;
+            color: white !important;
+            border: none !important;
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            margin-left: 10px !important;
+            font-weight: 500 !important;
+        }
+        
+        #githubLoadBtn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(3, 102, 214, 0.3) !important;
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <script>
+        const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        if (isChrome && parseInt(navigator.userAgent.match(/Chrome\/(\d+)/)?.[1] || 0) < 50) {
+            alert('Пожалуйста, обновите браузер до последней версии');
+        }
+
+        if (!window.Promise) {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"><\/script>');
+        }
+        if (!window.fetch) {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js"><\/script>');
+        }
+    </script>
+</head>
+
+<body class="transition-colors duration-300">
+    <div class="toggle-controls" id="toggleControls">≡</div>
+    
+    <div class="background-text">
+        <h1>Департамент имущественных отношений Ямало-Ненецкого автономного округа</h1>
+    </div>
+    
+    <div class="controls" id="controls">
+        <input type="text" id="searchInput" placeholder="Поиск..." style="padding: 8px; border-radius: 8px; border: 1px solid var(--primary-color);">
+        <span id="selectedCount" style="margin-left: 10px; font-size: 0.9em; color: var(--accent-color); display: none;">Выделено: 0</span>
+        <div class="autocomplete-suggestions" id="searchSuggestions"></div>
+        
+        <button type="button" id="jsonExportBtn">JSON Экспорт</button>
+        <button type="button" id="jsonImportBtn">JSON Импорт</button>
+        <!-- Кнопка загрузки из GitHub будет добавлена здесь скриптом -->
+        
+        <button type="button" id="saveBtn">Сохранить</button>
+        <button type="button" id="collapseAllBtn">Свернуть все</button>
+        <button type="button" id="collapseParentBtn" class="collapse-parent-btn">Свернуть родителя</button>
+        
+        <button type="button" id="addSuperordinateAboveBtn">Добавить сверху</button>
+        <button type="button" id="uploadFileBtn">Загрузить файл</button>
+        
+        <button type="button" id="mark269Btn">Отсутствует в 269-П</button>
+        <button type="button" id="power269Btn">Полномочие из 269-П</button>
+        <button type="button" id="subordinateBtn">Должностные регламенты</button>
+        <button type="button" id="forAllBtn">Все сотрудники</button>
+        <button type="button" id="authorityBtn">Идентичное полномочие</button>
+        <button type="button" id="okrBtn">OKR</button>
+        <button type="button" id="indicatorBtn">Гос. программа</button>
+        <div class="cluster-controls" style="display: flex; gap: 5px; align-items: center;">
+            <select id="clusterSelect" style="padding: 8px; border-radius: 8px; border: 1px solid var(--primary-color); background: var(--controls-bg); color: var(--text-color);">
+                <option value="">Вся структура</option>
+            </select>
+            <button id="addToClusterBtn" title="Добавить в кластер">🏷️</button>
+        </div>
+        <button type="button" id="zoomInBtn">+</button>
+        <button type="button" id="zoomResetBtn" class="reset-zoom-btn" title="Сбросить масштаб и центрировать на родительском узле">⭕</button>
+        <button type="button" id="zoomOutBtn">-</button>
+        <div class="theme-switch" id="themeSwitch">
+            <span class="theme-icon sun-icon">☀️</span>
+            <span class="theme-icon moon-icon">🌙</span>
+            <div class="theme-switch-handle"></div>
+            <div class="theme-transition-overlay" id="themeTransitionOverlay"></div>
+        </div>
+    </div>
+    <div class="drop-zone" id="dropZone">Перетащите файл сюда</div>
+    <div id="tree" class="tree"></div>
+    
+    <div class="image-preview-container" id="previewContainer">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" class="image-preview" id="fullPreview">
+    </div>
+    <div class="watermark">Interactive Tree v9.2</div>
+    <div class="history-log-icon" id="historyLogIcon" title="История изменений">🕒</div>
+    <div class="history-dialog-backdrop" id="historyDialogBackdrop">
+        <div class="history-dialog">
+            <h3>История последних изменений</h3>
+            <ul class="history-list" id="historyList"></ul>
+            <button class="history-dialog-close" id="historyDialogClose">Закрыть</button>
+        </div>
+    </div>
+    <div class="department-management" id="departmentManagement">
+        <div class="department-header">
+            <h2>Управление отделами</h2>
+            <button id="closeDepartmentManagement">× Закрыть</button>
+        </div>
+        <div class="department-container" id="departmentContainer"></div>
+    </div>
+    <div id="tooltip-container" class="tooltip" style="display: none;"></div>
+    <script src="node-effects.js"></script>
+    <script src="indexed-db-manager.js"></script>
+    <script src="tree-manager-core.js"></script>
+    <script>
+    // Проверяем загрузку tree-manager-core.js
+    console.log('=== ПРОВЕРКА ЗАГРУЗКИ СКРИПТОВ ===');
+    console.log('TreeManager доступен:', typeof TreeManager !== 'undefined');
+    console.log('TreeManagerCore доступен:', typeof TreeManagerCore !== 'undefined');
+    console.log('TreeManager в window:', window.TreeManager);
+    console.log('TreeManagerCore в window:', window.TreeManagerCore);
+    
+    // Проверяем, что TreeManager - это функция
+    if (typeof TreeManager === 'function') {
+        console.log('✅ TreeManager загружен как функция');
+        // Создаем глобальный экземпляр
+        window.treeManager = new TreeManager();
+        console.log('✅ treeManager создан:', window.treeManager);
+    } else if (typeof window.TreeManager === 'function') {
+        console.log('✅ window.TreeManager загружен');
+        window.treeManager = new window.TreeManager();
+        console.log('✅ treeManager создан из window.TreeManager');
+    } else if (typeof TreeManagerCore === 'function') {
+        console.log('✅ TreeManagerCore загружен');
+        window.treeManager = new TreeManagerCore();
+        console.log('✅ treeManager создан из TreeManagerCore');
+    } else {
+        console.error('❌ TreeManager не найден!');
+        // Создаем заглушку
+        window.treeManager = {
+            initialize: () => console.log('TreeManager заглушка: initialize'),
+            updateTree: () => console.log('TreeManager заглушка: updateTree'),
+            saveData: () => console.log('TreeManager заглушка: saveData')
+        };
+    }
+</script>
+    <script src="main.js"></script>
+<script>
+console.log('После загрузки tree-manager-core.js:');
+console.log('window.TreeManager:', window.TreeManager);
+console.log('window.TreeManagerCore:', window.TreeManagerCore);
+console.log('Все ключи с Tree:', Object.keys(window).filter(k => k.includes('Tree')));
+</script>
+</body>
+</html>
