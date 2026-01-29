@@ -441,13 +441,18 @@
                     <span>Калькулятор эффективности</span>
                 </div>
             </div>
-                <div class="book-section main" onclick="switchTab('dio')" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-top: 1px solid #8b5cf6;">
-        <div class="section-icon">
-            <img src="https://avatars.mds.yandex.net/i?id=b76c00669840a26fac6c5622da34239f_l-16407139-images-thumbs&n=13" 
-                 style="width: 20px; height: 20px; object-fit: contain; border-radius: 4px;">
-        </div>
-        <span>База ДИО</span>
+ <div class="book-section main" onclick="switchTab('dio')" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-top: 1px solid #8b5cf6;">
+    <div class="section-icon">
+        <img src="https://avatars.mds.yandex.net/i?id=b76c00669840a26fac6c5622da34239f_l-16407139-images-thumbs&n=13" 
+             style="width: 20px; height: 20px; object-fit: contain; border-radius: 4px;">
     </div>
+    <span>База ДИО</span>
+</div>
+
+<div class="book-subsection" onclick="switchTab('dio_tree')" id="navDioTree">
+    <div class="section-icon">🌳</div>
+    <span>Дерево ДИО</span>
+</div>
 </aside>
 
         <main class="book-content">
@@ -708,10 +713,55 @@
                 <div id="calculatorRoot"></div>
             </div>
 <div class="tab-content" id="dioTab">
-                <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <!-- Пустой контент - можно будет наполнить позже -->
+    <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center py-12 text-slate-400">
+            <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <p class="text-lg font-medium mb-2">База должностных инструкций</p>
+            <p class="text-sm">Выберите "Дерево ДИО" для работы с интерактивной структурой</p>
+        </div>
+    </div>
+</div>
+
+<div class="tab-content" id="dioTreeTab">
+    <div class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Контейнер для дерева ДИО -->
+        <div id="dioTreeContainer" class="bg-white rounded-xl shadow-lg border border-slate-200 p-4 min-h-[600px]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800">Дерево ДИО (Интерактивная структура)</h2>
+                <div class="flex gap-2">
+                    <button onclick="loadDioFromGitHub()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                        </svg>
+                        Загрузить из GitHub
+                    </button>
+                    <button onclick="saveDioToGitHub()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                        </svg>
+                        Сохранить в GitHub
+                    </button>
                 </div>
             </div>
+            
+            <!-- iframe для загрузки дерева ДИО -->
+            <iframe 
+                id="dioTreeFrame" 
+                src="dio-tree.html" 
+                class="w-full h-[700px] border border-slate-300 rounded-lg"
+                frameborder="0"
+                allowfullscreen
+                style="background: white;"
+            ></iframe>
+            
+            <div class="mt-4 text-sm text-slate-500">
+                <p>Интерактивное дерево структуры ДИО. Используйте кнопки выше для загрузки/сохранения данных.</p>
+            </div>
+        </div>
+    </div>
+</div>
         </main>
     </div>
     <footer class="bg-white border-t border-slate-200 mt-auto py-4">
@@ -1685,6 +1735,7 @@ function initCalculator() {
     const STORAGE_KEY_DASHBOARDS = 'gko_dashboards_v2';
     const STORAGE_KEY_CALCULATOR = 'gko_calculator_data_v1';
     const STORAGE_KEY_ALL = 'gko_all_data.json';
+        const STORAGE_KEY_DIO_TREE = 'gko_dio_tree_v1';
     const now = Date.now();
     const GITHUB_SYNC_ENABLED = true;
     
@@ -1694,6 +1745,7 @@ async function loadFromGitHub() {
     if (!GITHUB_SYNC_ENABLED) {
         loadData();
         loadDashboardsData();
+         loadDioData();
         return;
     }
     
@@ -1732,12 +1784,24 @@ async function loadFromGitHub() {
             console.log('Данные калькулятора загружены из GitHub');
         }
         
+  if (json.dioTree) {
+            console.log('Данные дерева ДИО найдены в GitHub:', json.dioTree);
+            localStorage.setItem(STORAGE_KEY_DIO_TREE, JSON.stringify(json.dioTree));
+            console.log('Данные дерева ДИО загружены из GitHub');
+            
+            // Обновляем iframe если он открыт
+            if (currentTab === 'dio_tree') {
+                updateDioTreeFrame();
+            }
+        }
+        
         showNotification('✅ Все данные загружены из GitHub', 'success');
         
     } catch (error) {
         console.warn('Не удалось загрузить из GitHub:', error.message);
         loadData();
         loadDashboardsData();
+        loadDioData(); // Добавить эту строку
     }
 }
     
@@ -1765,13 +1829,14 @@ async function loadFromGitHub() {
         
         currentGitHubToken = token;
         
-        const allData = {
-            version: "1.0",
-            exportDate: new Date().toISOString(),
-            npas: appData,
-            dashboards: dashboardsData,
-            calculator: JSON.parse(localStorage.getItem(STORAGE_KEY_CALCULATOR) || '{}')
-        };
+    const allData = {
+        version: "1.0",
+        exportDate: new Date().toISOString(),
+        npas: appData,
+        dashboards: dashboardsData,
+        calculator: JSON.parse(localStorage.getItem(STORAGE_KEY_CALCULATOR) || '{}'),
+        dioTree: window.dioTreeData || {} // ДОБАВИТЬ ЭТУ СТРОКУ
+    };
         
         const content = JSON.stringify(allData, null, 2);
         const owner = 'mark98molchanov-a11y';
@@ -1885,9 +1950,11 @@ function exportJson() {
         npas: appData,
         dashboards: dashboardsData,
         calculator: calculatorData,
+        dioTree: window.dioTreeData || {}, // Добавляем дерево ДИО
         metadata: {
             npaCount: appData.length,
             dashboardsCount: dashboardsData.length,
+            dioTreeSize: Object.keys(window.dioTreeData || {}).length,
             exportFormat: "combined"
         }
     };
@@ -1899,78 +1966,204 @@ function exportJson() {
     a.click();
 }
 
-    function importJson() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        input.onchange = function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const json = JSON.parse(e.target.result);
-                    
-                    let confirmMessage = "Импортировать данные из файла?\n\n";
-                    let hasNPA = false;
-                    let hasDashboards = false;
-                    let hasCalculator = false;
-                    
-                    if (json.npas && Array.isArray(json.npas)) {
-                        confirmMessage += `НПА: ${json.npas.length} записей\n`;
-                        hasNPA = true;
-                    }
-                    
-                    if (json.dashboards && Array.isArray(json.dashboards)) {
-                        confirmMessage += `Дашборды: ${json.dashboards.length} записей\n`;
-                        hasDashboards = true;
-                    }
-                    
-                    if (json.calculator) {
-                        confirmMessage += `Калькулятор: данные настроек\n`;
-                        hasCalculator = true;
-                    }
-                    
-                    if (json.version && json.version === "1.0" && json.exportFormat === "combined") {
-                        confirmMessage += "\nФормат: объединенный файл";
-                    } else if (Array.isArray(json) && json.length > 0 && json[0].doc) {
-                        confirmMessage = `Импортировать ${json.length} записей НПА?`;
-                        hasNPA = true;
-                        hasDashboards = false;
-                    } else if (Array.isArray(json) && json.length > 0 && json[0].title) {
-                        confirmMessage = `Импортировать ${json.length} дашбордов?`;
-                        hasNPA = false;
-                        hasDashboards = true;
-                    }
-                    
-                    if (confirm(confirmMessage)) {
-                        if (hasNPA) {
-                            const npaData = json.npas || json;
-                            appData = [...npaData];
-                            saveData();
-                        }
-                        
-                        if (hasDashboards) {
-                            const dashData = json.dashboards || json;
-                            dashboardsData = [...dashData];
-                            saveDashboardsData();
-                        }
-                        
-                        if (hasCalculator && json.calculator) {
-                            localStorage.setItem(STORAGE_KEY_CALCULATOR, JSON.stringify(json.calculator));
-                        }
-                        
-                        alert("Данные успешно импортированы!");
-                    }
-                } catch(e) {
-                    alert("Ошибка чтения JSON файла: " + e.message);
+function importJson() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                
+                let confirmMessage = "Импортировать данные из файла?\n\n";
+                let hasNPA = false;
+                let hasDashboards = false;
+                let hasCalculator = false;
+                let hasDioTree = false;
+                
+                if (json.npas && Array.isArray(json.npas)) {
+                    confirmMessage += `НПА: ${json.npas.length} записей\n`;
+                    hasNPA = true;
                 }
-            };
-            reader.readAsText(file);
+                
+                if (json.dashboards && Array.isArray(json.dashboards)) {
+                    confirmMessage += `Дашборды: ${json.dashboards.length} записей\n`;
+                    hasDashboards = true;
+                }
+                
+                if (json.calculator) {
+                    confirmMessage += `Калькулятор: данные настроек\n`;
+                    hasCalculator = true;
+                }
+                
+                if (json.dioTree) {
+                    confirmMessage += `Дерево ДИО: данные структуры\n`;
+                    hasDioTree = true;
+                }
+                
+                if (json.version && json.version === "1.0" && json.exportFormat === "combined") {
+                    confirmMessage += "\nФормат: объединенный файл";
+                }
+                
+                if (confirm(confirmMessage)) {
+                    if (hasNPA) {
+                        const npaData = json.npas || json;
+                        appData = [...npaData];
+                        saveData();
+                    }
+                    
+                    if (hasDashboards) {
+                        const dashData = json.dashboards || json;
+                        dashboardsData = [...dashData];
+                        saveDashboardsData();
+                    }
+                    
+                    if (hasCalculator && json.calculator) {
+                        localStorage.setItem(STORAGE_KEY_CALCULATOR, JSON.stringify(json.calculator));
+                    }
+                    
+                    if (hasDioTree && json.dioTree) {
+                        window.dioTreeData = json.dioTree;
+                        saveDioData();
+                        if (currentTab === 'dio_tree') {
+                            updateDioTreeFrame();
+                        }
+                    }
+                    
+                    showNotification("✅ Все данные успешно импортированы!", "success");
+                }
+            } catch(e) {
+                alert("Ошибка чтения JSON файла: " + e.message);
+            }
         };
-        input.click();
+        reader.readAsText(file);
+    };
+    input.click();
+}
+    
+    function loadDioData() {
+    const saved = localStorage.getItem(STORAGE_KEY_DIO_TREE);
+    if (saved) {
+        try {
+            window.dioTreeData = JSON.parse(saved);
+        } catch (e) { 
+            window.dioTreeData = {};
+        }
+    } else {
+        window.dioTreeData = {};
     }
+    return window.dioTreeData;
+}
+
+function saveDioData() {
+    localStorage.setItem(STORAGE_KEY_DIO_TREE, JSON.stringify(window.dioTreeData || {}));
+}
+
+function updateDioTreeFrame() {
+    const iframe = document.getElementById('dioTreeFrame');
+    if (iframe && iframe.contentWindow) {
+        // Отправляем данные в iframe
+        iframe.contentWindow.postMessage({
+            type: 'LOAD_DIO_DATA',
+            data: window.dioTreeData
+        }, '*');
+    }
+}
+
+async function loadDioFromGitHub() {
+    try {
+        const response = await fetch(`${GITHUB_SYNC_API}gko_all_data.json`);
+        if (!response.ok) throw new Error('Файл не найден');
+        
+        const json = await response.json();
+        if (json.dioTree) {
+            window.dioTreeData = json.dioTree;
+            saveDioData();
+            updateDioTreeFrame();
+            showNotification('✅ Дерево ДИО загружено из GitHub', 'success');
+        } else {
+            showNotification('⚠️ Данные дерева ДИО не найдены в GitHub', 'warning');
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки ДИО:', error);
+        showNotification('❌ Ошибка загрузки из GitHub', 'error');
+    }
+}
+
+async function saveDioToGitHub() {
+    // Используем существующий токен или запрашиваем новый
+    if (!currentGitHubToken) {
+        showGitHubTokenModal();
+        return;
+    }
+    
+    // Загружаем текущие данные из GitHub
+    let allData = {};
+    try {
+        const response = await fetch(`${GITHUB_SYNC_API}gko_all_data.json`);
+        if (response.ok) {
+            allData = await response.json();
+        }
+    } catch (e) {
+        // Файл не существует, создаем новый
+    }
+    
+    // Обновляем данные дерева ДИО
+    allData.dioTree = window.dioTreeData || {};
+    allData.version = "1.0";
+    allData.exportDate = new Date().toISOString();
+    
+    // Сохраняем обратно в GitHub
+    const content = JSON.stringify(allData, null, 2);
+    const owner = 'mark98molchanov-a11y';
+    const repo = 'mark98molchanov-a12y.gko-registry-system';
+    const path = 'gko_all_data.json';
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    
+    try {
+        let sha = null;
+        try {
+            const res = await fetch(apiUrl, {
+                headers: {
+                    'Authorization': `token ${currentGitHubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                sha = data.sha;
+            }
+        } catch (e) { /* Файл не существует */ }
+        
+        const response = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${currentGitHubToken}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+                message: `Обновление дерева ДИО: ${new Date().toLocaleString('ru-RU')}`,
+                content: btoa(unescape(encodeURIComponent(content))),
+                sha: sha
+            })
+        });
+        
+        if (response.ok) {
+            showNotification('✅ Дерево ДИО сохранено в GitHub', 'success');
+        } else {
+            const error = await response.json();
+            alert(`Ошибка: ${error.message || 'Неизвестная ошибка'}`);
+        }
+        
+    } catch (error) {
+        alert(`Ошибка: ${error.message}`);
+    }
+}
 function switchTab(tabName) {
     // Убрать активность со всех пунктов навигации
     document.querySelectorAll('.book-section.main, .book-subsection, .book-subsubsection').forEach(el => {
@@ -1981,6 +2174,7 @@ function switchTab(tabName) {
         'npas': 'navNPA',
         'dashboards': 'navDashboards', 
         'calculator': 'navCalculator',
+        'dio_tree': 'navDioTree', // ДОБАВИТЬ ЭТУ СТРОКУ
         'dio': null
     };
     
@@ -1993,7 +2187,7 @@ function switchTab(tabName) {
     }
     
     // Для главной секции ДИО
-    if (tabName === 'dio') {
+    if (tabName === 'dio' || tabName === 'dio_tree') { // ОБНОВИТЬ ЭТУ СТРОКУ
         const dioSection = Array.from(document.querySelectorAll('.book-section.main'))
             .find(el => el.textContent.includes('База ДИО'));
         if (dioSection) {
@@ -2060,6 +2254,25 @@ function switchTab(tabName) {
         document.getElementById('bulkToolbarDashboards').classList.add('hidden');
         
         initCalculator();
+    } else if (tabName === 'dio_tree') { // ДОБАВИТЬ ЭТОТ БЛОК
+        document.getElementById('npaImportButtons').classList.add('hidden');
+        document.getElementById('dashboardsImportButtons').classList.add('hidden');
+        document.getElementById('addButtonText').textContent = 'Добавить узел';
+        document.getElementById('resetBtnText').textContent = 'Сброс дерева ДИО';
+        currentTab = 'dio_tree';
+        
+        document.getElementById('bulkToolbar').classList.add('hidden');
+        document.getElementById('bulkToolbarDashboards').classList.add('hidden');
+        
+        // Загружаем данные дерева ДИО при первом открытии
+        if (!window.dioTreeData) {
+            loadDioData();
+        }
+        
+        // Обновляем iframe
+        setTimeout(() => {
+            updateDioTreeFrame();
+        }, 500);
     }
 }
 
@@ -2079,9 +2292,15 @@ function hardResetCurrent() {
         if (confirm("Очистить данные Базы ДИО?")) {
             showNotification('Данные ДИО очищены', 'success');
         }
+    } else if (currentTab === 'dio_tree') { // ДОБАВИТЬ ЭТОТ БЛОК
+        if (confirm("Очистить все данные дерева ДИО?")) {
+            localStorage.removeItem(STORAGE_KEY_DIO_TREE);
+            window.dioTreeData = {};
+            updateDioTreeFrame();
+            showNotification('Данные дерева ДИО очищены', 'success');
+        }
     }
-}
-    
+} 
     function initializeDashboardsTab() {
         if (dashboardsData.length === 0) {
             loadDashboardsData();
@@ -3510,22 +3729,39 @@ window.addEventListener('DOMContentLoaded', function() {
             }, 100);
         }
     });
-    window.addEventListener('hashchange', function() {
-        const hash = window.location.hash;
-        console.log('Hash changed to:', hash);
+window.addEventListener('hashchange', function() {
+    const hash = window.location.hash;
+    console.log('Hash changed to:', hash);
+    
+    if (hash === '#calculator') {
+        if (capitalizationContainer && capitalizationIcon && !isCapitalizationExpanded) {
+            toggleCapitalization();
+        }
+        setTimeout(() => {
+            switchTab('calculator');
+        }, 50);
+    } else if (hash === '#npas') {
+        switchTab('npas');
+    } else if (hash === '#dashboards') {
+        switchTab('dashboards');
+    } else if (hash === '#dio_tree') {
+        switchTab('dio_tree');
+    }
+});
+        window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'DIO_TREE_SAVE') {
+            // Сохраняем данные из iframe
+            window.dioTreeData = event.data.data;
+            saveDioData();
+            showNotification('✅ Изменения дерева ДИО сохранены', 'success');
+        }
         
-        if (hash === '#calculator') {
-            if (capitalizationContainer && capitalizationIcon && !isCapitalizationExpanded) {
-                toggleCapitalization();
-            }
-            setTimeout(() => {
-                switchTab('calculator');
-            }, 50);
-        } else if (hash === '#npas') {
-            switchTab('npas');
-        } else if (hash === '#dashboards') {
-            switchTab('dashboards');
+        if (event.data && event.data.type === 'DIO_TREE_LOAD') {
+            // Отправляем данные в iframe
+            event.source.postMessage({
+                type: 'DIO_TREE_DATA',
+                data: window.dioTreeData || {}
+            }, event.origin);
         }
     });
-});
 </script>
