@@ -5,11 +5,12 @@
     <title>Интерактивное дерево - Apache Superset Embed</title>
     <meta http-equiv="X-Frame-Options" content="allow-from *">
     <script>
+        // Сообщаем скриптам, что мы работаем в режиме iframe
         window.IFRAME_MODE = true;
     </script>
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self' data: blob:;
-    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob:;
     connect-src 'self' https://raw.githubusercontent.com https://api.github.com https://mark98molchanov-ally.github.io;
@@ -21,28 +22,78 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     
     <style>
-        /* Скрываем элементы управления, которые дублируются в родительском окне или не нужны в iframe */
-        #githubLoadBtn, #jsonExportBtn, #jsonImportBtn, .watermark {
+        /* --- СТИЛИ ДЛЯ РЕЖИМА ИНТЕГРАЦИИ --- */
+        
+        /* Скрываем элементы, которые дублируются в родительском окне или не нужны в iframe */
+        #githubLoadBtn, 
+        #jsonExportBtn, 
+        #jsonImportBtn, 
+        #saveBtn, /* Сохранение теперь в главном меню */
+        .watermark,
+        .background-text,
+        .toggle-controls {
             display: none !important;
         }
         
+        /* Делаем фон прозрачным, чтобы сливался с дизайном вкладки */
         body {
-            background: transparent !important; /* Прозрачный фон для интеграции */
+            background: transparent !important;
             overflow: hidden; /* Скролл управляется контейнером дерева */
         }
 
+        /* Контейнер дерева должен занимать всё пространство iframe */
         .tree-container {
             height: 100vh !important;
             width: 100vw !important;
             padding: 20px !important;
+            box-sizing: border-box;
+            overflow: auto !important;
         }
         
-        /* Адаптация кнопок */
+        /* Адаптация панели управления под iframe */
         .controls {
-            top: 5px;
-            left: 5px;
-            transform: scale(0.9);
-            transform-origin: top left;
+            top: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            max-width: none;
+            box-sizing: border-box;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            /* Скрываем полосу прокрутки в панели */
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        .controls::-webkit-scrollbar {
+            display: none;
+        }
+
+        #githubLoadBtn {
+            background: linear-gradient(145deg, #24292e, #0366d6) !important;
+            color: white !important;
+            border: none !important;
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            margin-left: 10px !important;
+            font-weight: 500 !important;
+        }
+        
+        #githubLoadBtn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(3, 102, 214, 0.3) !important;
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
     
@@ -64,7 +115,7 @@
 <body class="transition-colors duration-300">
     <div class="toggle-controls" id="toggleControls">≡</div>
     
-    <div class="background-text" style="display: none;">
+    <div class="background-text">
         <h1>Департамент имущественных отношений Ямало-Ненецкого автономного округа</h1>
     </div>
     
@@ -75,7 +126,6 @@
         
         <button type="button" id="jsonExportBtn">JSON Экспорт</button>
         <button type="button" id="jsonImportBtn">JSON Импорт</button>
-        
         <button type="button" id="saveBtn">Сохранить</button>
         <button type="button" id="collapseAllBtn">Свернуть все</button>
         <button type="button" id="collapseParentBtn" class="collapse-parent-btn">Свернуть родителя</button>
@@ -133,45 +183,83 @@
     <script src="node-effects.js"></script>
     <script src="indexed-db-manager.js"></script>
     <script src="tree-manager-core.js"></script>
+    
+    <script>
+    // Проверяем загрузку tree-manager-core.js
+    console.log('=== ПРОВЕРКА ЗАГРУЗКИ СКРИПТОВ ===');
+    console.log('TreeManager доступен:', typeof TreeManager !== 'undefined');
+    console.log('TreeManagerCore доступен:', typeof TreeManagerCore !== 'undefined');
+    console.log('TreeManager в window:', window.TreeManager);
+    console.log('TreeManagerCore в window:', window.TreeManagerCore);
+    
+    // Проверяем, что TreeManager - это функция
+    if (typeof TreeManager === 'function') {
+        console.log('✅ TreeManager загружен как функция');
+        // Создаем глобальный экземпляр
+        window.treeManager = new TreeManager();
+        console.log('✅ treeManager создан:', window.treeManager);
+    } else if (typeof window.TreeManager === 'function') {
+        console.log('✅ window.TreeManager загружен');
+        window.treeManager = new window.TreeManager();
+        console.log('✅ treeManager создан из window.TreeManager');
+    } else if (typeof TreeManagerCore === 'function') {
+        console.log('✅ TreeManagerCore загружен');
+        window.treeManager = new TreeManagerCore();
+        console.log('✅ treeManager создан из TreeManagerCore');
+    } else {
+        console.error('❌ TreeManager не найден!');
+        // Создаем заглушку
+        window.treeManager = {
+            initialize: () => console.log('TreeManager заглушка: initialize'),
+            updateTree: () => console.log('TreeManager заглушка: updateTree'),
+            saveData: () => console.log('TreeManager заглушка: saveData')
+        };
+    }
+    </script>
+    
     <script src="main.js"></script>
     
     <script>
-        // Слушаем сообщения от index.html
+    (function() {
+        console.log('🔌 Инициализация моста Iframe...');
+        
+        // Слушаем сообщения от родительского окна (index.html)
         window.addEventListener('message', async function(event) {
             const message = event.data;
             
-            // Запрос данных для сохранения
+            // 1. Запрос данных для сохранения на GitHub
             if (message.type === 'GET_TREE_DATA') {
-                console.log('DIO Tree: Получен запрос на экспорт данных');
+                console.log('📥 Получен запрос GET_TREE_DATA');
                 if (window.treeManager) {
                     try {
-                        const data = await window.treeManager.exportToJSON(); // В main.js/tree-manager это обычно триггерит скачивание
-                        // Нам нужно получить объект данных, а не скачивать файл.
-                        // Если метод exportToJSON только скачивает, создадим структуру здесь вручную
-                        // используя методы treeManager
+                        // Собираем объект данных вручную, чтобы не вызывать скачивание файла
+                        const tm = window.treeManager;
                         
+                        // Собираем только валидные изображения
                         const imagesToSave = {};
-                        for(const [key, value] of Object.entries(window.treeManager.imagesData)) {
-                           if(value.startsWith('data:image')) {
+                        for(const [key, value] of Object.entries(tm.imagesData || {})) {
+                           if(typeof value === 'string' && value.startsWith('data:image')) {
                               imagesToSave[key] = value;
                            }
                         }
                         
                         const exportData = {
                              version: '2.8',
-                             tree: window.treeManager.serializeTree(window.treeManager.treeData),
+                             tree: tm.serializeTree(tm.treeData),
                              images: imagesToSave,
-                             filesData: window.treeManager.filesData,
-                             clusters: Array.from(window.treeManager.clusters.entries()),
-                             availableClusters: Array.from(window.treeManager.availableClusters),
+                             filesData: tm.filesData || {},
+                             clusters: Array.from(tm.clusters ? tm.clusters.entries() : []),
+                             availableClusters: Array.from(tm.availableClusters || []),
                              settings: {
-                               nodeCounter: window.treeManager.nodeCounter,
-                               darkMode: window.treeManager.darkMode,
-                               activeCluster: window.treeManager.activeCluster
+                               nodeCounter: tm.nodeCounter,
+                               darkMode: tm.darkMode,
+                               activeCluster: tm.activeCluster,
+                               uiSettings: tm.uiSettings
                              },
                              timestamp: Date.now()
                         };
                         
+                        console.log('📤 Отправка данных родителю...');
                         // Отправляем данные обратно в index.html
                         window.parent.postMessage({
                             type: 'TREE_DATA_RESPONSE',
@@ -179,24 +267,42 @@
                         }, '*');
                         
                     } catch (e) {
-                        console.error('DIO Tree: Ошибка экспорта', e);
+                        console.error('❌ Ошибка при сборе данных дерева:', e);
+                        // Отправляем пустой ответ, чтобы не вешать родителя
+                        window.parent.postMessage({ type: 'TREE_DATA_RESPONSE', payload: null }, '*');
                     }
+                } else {
+                    console.warn('⚠ TreeManager еще не готов');
+                    window.parent.postMessage({ type: 'TREE_DATA_RESPONSE', payload: null }, '*');
                 }
             }
             
-            // Прием данных для импорта
+            // 2. Прием данных для импорта (из GitHub или JSON)
             if (message.type === 'IMPORT_TREE_DATA') {
-                console.log('DIO Tree: Получены данные для импорта');
+                console.log('📥 Получены данные для импорта (IMPORT_TREE_DATA)');
                 if (window.treeManager && message.payload) {
                     try {
                         await window.treeManager.importData(message.payload);
-                        console.log('DIO Tree: Импорт успешен');
+                        console.log('✅ Данные успешно импортированы в дерево');
                     } catch (e) {
-                        console.error('DIO Tree: Ошибка импорта', e);
+                        console.error('❌ Ошибка импорта в дерево:', e);
                     }
                 }
             }
         });
+        
+        // Сообщаем родителю, что мы готовы
+        if (window.parent) {
+            window.parent.postMessage({ type: 'TREE_READY' }, '*');
+        }
+    })();
+    </script>
+
+    <script>
+        console.log('После загрузки tree-manager-core.js:');
+        console.log('window.TreeManager:', window.TreeManager);
+        console.log('window.TreeManagerCore:', window.TreeManagerCore);
+        console.log('Все ключи с Tree:', Object.keys(window).filter(k => k.includes('Tree')));
     </script>
 </body>
 </html>
