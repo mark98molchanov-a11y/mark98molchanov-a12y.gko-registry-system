@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2026-03-09T13:46:45.453Z",
+  "exportDate": "2026-03-09T14:06:46.804Z",
   "npas": [
     {
       "id": 2,
@@ -1049,7 +1049,7 @@
           "subBlocks": [
             "№ полномочий из 269-П"
           ],
-          "isHorizontal": false,
+          "isHorizontal": true,
           "metricBlocks": [],
           "isAuthority": false,
           "absent269": false,
@@ -29076,10 +29076,10 @@
                 "isExpanded": false
               }
             ],
-            "isExpanded": false
+            "isExpanded": true
           }
         ],
-        "isExpanded": false
+        "isExpanded": true
       },
       {
         "id": 168,
@@ -29862,7 +29862,7 @@
             "isExpanded": false
           }
         ],
-        "isExpanded": false
+        "isExpanded": true
       },
       {
         "id": 169,
